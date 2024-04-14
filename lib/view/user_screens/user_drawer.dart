@@ -1,12 +1,12 @@
-import 'package:chief/view/user_myorders_screen.dart';
-import 'package:chief/view/user_requestqueue_screen.dart';
-import 'package:chief/view/user_myrequests_screen.dart';
+import 'package:chief/view/user_screens/user_myorders_screen.dart';
+import 'package:chief/view/user_screens/user_requestqueue_screen.dart';
+import 'package:chief/view/user_screens/user_myrequests_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../app_assets.dart';
-import 'user_dashboard_screen.dart';
-import 'get_started_screen.dart';
+import '../../app_assets.dart';
+import 'User_dashboard_request_form.dart';
+import '../get_started_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -30,24 +30,24 @@ class CustomDrawer extends StatelessWidget {
           ),
           _buildDrawerItem(
             context: context,
-            icon: Icons.message,
+            icon: Icons.label_important_outline,
             text: 'New Request',
-            routeName: RequestForm.tag,
+            routeName: UserDashboardRequestForm.tag,
           ),
           _buildDrawerItem(
               context: context,
-              icon: Icons.message,
+              icon:Icons.query_builder,
               text: 'Request Queue',
-              routeName: MyRequestScreen.tag),
+              routeName: UserRequestQueueScreen.tag),
           _buildDrawerItem(
             context: context,
-            icon: Icons.message,
+            icon: Icons.tv,
             text: 'My Requests',
             routeName: PendingRequestScreen.tag,
           ),
           _buildDrawerItem(
             context: context,
-            icon: Icons.message,
+            icon: Icons.shopping_bag_outlined,
             text: 'My Orders',
             routeName: DashboardRequestScreen.tag,
           ),

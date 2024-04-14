@@ -2,7 +2,6 @@ import 'package:chief/global_custom_widgets/custom_app_bar.dart';
 import 'package:chief/view/get_started_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../app_assets.dart';
 
 class SplashScreen extends StatefulWidget {

@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import '../global_custom_widgets/custom_app_bar.dart';
-import '../global_custom_widgets/custom_horizontal_line.dart';
-import '../global_custom_widgets/custom_large_button.dart';
-import '../global_custom_widgets/custom_size.dart';
-import '../global_custom_widgets/custom_small_text_field.dart';
-import '../global_custom_widgets/custom_title_text.dart';
+import '../../global_custom_widgets/custom_app_bar.dart';
+import '../../global_custom_widgets/custom_horizontal_line.dart';
+import '../../global_custom_widgets/custom_large_button.dart';
+import '../../global_custom_widgets/custom_size.dart';
+import '../../global_custom_widgets/custom_text_form_field.dart';
+import '../../global_custom_widgets/custom_title_text.dart';
 
 // ignore: must_be_immutable
 class SignupUser extends StatefulWidget {
@@ -30,16 +30,11 @@ class _SignupUserState extends State<SignupUser> {
   String? imagePath;
 
   TextEditingController nameController = TextEditingController();
-
   TextEditingController numberController = TextEditingController();
-
   TextEditingController addressController = TextEditingController();
-
   TextEditingController gmailController = TextEditingController();
-
-  TextEditingController passController = TextEditingController();
-  TextEditingController confirmpassController = TextEditingController();
-
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   AppDatabase database = AppDatabase();
@@ -67,7 +62,7 @@ class _SignupUserState extends State<SignupUser> {
                       children: [
                         const Spacer(),
                         const CustomTitleText(
-                          text: 'Signup', // Only the text parameter is required
+                          text: 'Signup User', // Only the text parameter is required
                         ),
                         const Spacer(),
                         GestureDetector(
@@ -76,13 +71,13 @@ class _SignupUserState extends State<SignupUser> {
                           },
                           child: userSelectedImage
                               ? // Check if user has selected an image
-                              CircleAvatar(
+                              CircleAvatar( radius: 50,
                                   child: ClipOval(
                                     child: Image.file(
                                       File(imagePath!),
                                       fit: BoxFit.cover,
-                                      width: 80,
-                                      height: 80,
+                                      width: 100,
+                                      height: 100,
                                     ),
                                   ),
                                 )
@@ -121,52 +116,71 @@ class _SignupUserState extends State<SignupUser> {
                                 ),
                         ),
                         CustomSize(
-                          width: 4.w,
+                          width: 14.w,
                         ),
                       ],
                     ),
-                    CustomSmallTextField(
-                      keyboardType: TextInputType.name,
+                    CustomTextField(label: "Enter name",
                       controller: nameController,
-                      hintText: "Enter Name",
+                      hintText: "Enter name",
+                      height: MediaQuery.of(context).size.height * 0.056.h,
+                      width: MediaQuery.of(context).size.width * 0.7.w,
                     ),
+
                     Padding(
                       padding: EdgeInsets.symmetric(
                           vertical:
                               MediaQuery.of(context).size.height * 0.02.h),
-                      child: CustomSmallTextField(
+                      child: CustomTextField(
+                        label:"Enter number",
+                        controller: numberController,maxLength: 11,
                         keyboardType: TextInputType.number,
-                        controller: numberController,
-                        hintText: "Enter Number",
+                        hintText: "Enter number",
+                        height: MediaQuery.of(context).size.height * 0.056.h,
+                        width: MediaQuery.of(context).size.width * 0.7.w,
                       ),
                     ),
-                    CustomSmallTextField(
-                      keyboardType: TextInputType.streetAddress,
+                    CustomTextField(label:"Enter your location",
                       controller: addressController,
                       hintText: "Enter your location",
+                      height: MediaQuery.of(context).size.height * 0.056.h,
+                      width: MediaQuery.of(context).size.width * 0.7.w,
                     ),
+
                     Padding(
                       padding: EdgeInsets.symmetric(
                           vertical:
                               MediaQuery.of(context).size.height * 0.02.h),
-                      child: CustomSmallTextField(
-                        keyboardType: TextInputType.emailAddress,
-                        controller: gmailController,
+                      child:  CustomTextField(label:"Enter gmail",
+                        controller:gmailController,
                         hintText: "Enter gmail",
+                        height: MediaQuery.of(context).size.height * 0.056.h,
+                        width: MediaQuery.of(context).size.width * 0.7.w,
                       ),
+
+
                     ),
-                    CustomSmallTextField(
-                      keyboardType: TextInputType.visiblePassword,
-                      controller: passController,
-                      hintText: "Enter Password",
+                    CustomTextField(label:"Enter Password",
+                      controller:passwordController,
+                      hintText: "Enter Password",isPasswordField: true,
+                      height: MediaQuery.of(context).size.height * 0.056.h,
+                      width: MediaQuery.of(context).size.width * 0.7.w,
                     ),
+
                     Padding(
                       padding: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02.h),
-                      child: CustomSmallTextField(
-                        keyboardType: TextInputType.visiblePassword,
-                        controller: confirmpassController,
-                        hintText: "Confirm your Password",
+                      child:
+                      // CustomSmallTextField(
+                      //   keyboardType: TextInputType.visiblePassword,
+                      //   controller: confirmPasswordController,
+                      //   hintText: "Confirm your Password",
+                      // ),
+                      CustomTextField(label:"Confirm your Password",
+                        controller:confirmPasswordController,
+                        hintText: "Confirm your Password",isPasswordField: true,
+                        height: MediaQuery.of(context).size.height * 0.056.h,
+                        width: MediaQuery.of(context).size.width * 0.7.w,
                       ),
                     ),
                   ],
@@ -185,17 +199,17 @@ class _SignupUserState extends State<SignupUser> {
                       numberController.text.isEmpty ||
                       addressController.text.isEmpty ||
                       gmailController.text.isEmpty ||
-                      passController.text.isEmpty) {
+                      passwordController.text.isEmpty) {
                     Fluttertoast.showToast(msg: 'Please fill the above fields');
                   } else {
-                    if (confirmpassController.text == passController.text) {
+                    if (confirmPasswordController.text == passwordController.text) {
                       onTapSignupUser(
                           context,
                           nameController.text,
                           numberController.text,
                           addressController.text,
                           gmailController.text,
-                          passController.text);
+                          passwordController.text);
                     } else {
                       Fluttertoast.showToast(msg: "password didn't match");
                     }
@@ -263,6 +277,7 @@ class _SignupUserState extends State<SignupUser> {
   Widget items(String txt, IconData icon) {
     return GestureDetector(
       onTap: () {
+        Navigator.pop(context);
         if (txt == 'Gallery') {
           _pickImage(ImageSource.gallery);
         } else {

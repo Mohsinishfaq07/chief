@@ -1,14 +1,14 @@
-import 'package:chief/view/chief_requestqueue_screen.dart';
-import 'package:chief/view/get_started_screen.dart';
-import 'package:chief/view/chief_myorders_screen.dart.dart';
-import 'package:chief/view/chief_dashboard_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+ import 'package:chief/view/get_started_screen.dart';
+  import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../app_assets.dart';
+import '../../app_assets.dart';
+import 'chef_dashboard_screen.dart';
+import 'chef_myorders_screen.dart.dart';
+import 'chef_request_queue_screen.dart';
 
-class ShiefDrawer extends StatelessWidget {
-  const ShiefDrawer({super.key});
+class ChefDrawer extends StatelessWidget {
+  const ChefDrawer({super.key});
 
   void _navigateTo(BuildContext context, String routeName) {
     Navigator.pushNamed(context, routeName);
@@ -29,21 +29,21 @@ class ShiefDrawer extends StatelessWidget {
           ),
           _buildDrawerItem(
             context: context,
-            icon: Icons.message,
-            text: 'My Requests',
-            routeName: ShiefPendingRequest.tag,
+            icon: Icons.label_important_outline,
+            text: 'All Requests',
+            routeName: ChefPendingRequests.tag,
           ),
           _buildDrawerItem(
             context: context,
-            icon: Icons.message,
-            text: 'Request Queue',
+            icon: Icons.query_builder,
+            text: 'Requests in Queue',
             routeName: ChiefRequestScreen.tag,
           ),
           _buildDrawerItem(
             context: context,
-            icon: Icons.message,
+            icon: Icons.shopping_bag_outlined,
             text: 'My Orders',
-            routeName: ShiefDashboardScreen.tag,
+            routeName: ChefDashboardScreen.tag,
           ),
           _buildDrawerItem(
             context: context,

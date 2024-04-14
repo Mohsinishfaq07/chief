@@ -2,27 +2,28 @@
 
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/model/app_database.dart';
-import 'package:chief/view/user_drawer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chief/view/user_screens/user_drawer.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../global_custom_widgets/custom_horizontal_line.dart';
-import '../global_custom_widgets/custom_large_button.dart';
-import '../global_custom_widgets/custom_size.dart';
-import '../global_custom_widgets/custom_text_form_field.dart';
-import '../global_custom_widgets/custom_title_text.dart';
 
-class RequestForm extends StatefulWidget {
-  const RequestForm({super.key});
-  static const tag = 'RequestForm';
+import '../../global_custom_widgets/custom_horizontal_line.dart';
+import '../../global_custom_widgets/custom_large_button.dart';
+import '../../global_custom_widgets/custom_size.dart';
+import '../../global_custom_widgets/custom_text_form_field.dart';
+import '../../global_custom_widgets/custom_title_text.dart';
+
+class UserDashboardRequestForm extends StatefulWidget {
+  const UserDashboardRequestForm({super.key});
+  static const tag = 'UserDashboardRequestForm';
 
   @override
-  State<RequestForm> createState() => _RequestFormState();
+  State<UserDashboardRequestForm> createState() => _UserDashboardRequestFormState();
 }
 
-class _RequestFormState extends State<RequestForm> {
+class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
   TextEditingController itemNameController = TextEditingController();
 
   TextEditingController dateController = TextEditingController();
@@ -135,7 +136,10 @@ class _RequestFormState extends State<RequestForm> {
                       name,
                       image,
                       'request_form',
-                      '');
+                      '',
+                      ''
+                      ,
+                  );
                 }
               },
             ),
@@ -154,7 +158,7 @@ class _RequestFormState extends State<RequestForm> {
                           const Spacer(),
                           const CustomTitleText(
                             text:
-                                'Add Request', // Only the text parameter is required
+                            'Add Request', // Only the text parameter is required
                           ),
                           const Spacer(),
                           FutureBuilder<DocumentSnapshot>(
@@ -167,8 +171,8 @@ class _RequestFormState extends State<RequestForm> {
                                   ConnectionState.waiting) {
                                 return const Center(
                                     child: CircularProgressIndicator(
-                                  color: Colors.pink,
-                                )); // Show loading indicator while waiting for user data
+                                      color: Colors.pink,
+                                    )); // Show loading indicator while waiting for user data
                               }
                               if (userSnapshot.hasError) {
                                 return Center(
@@ -179,7 +183,7 @@ class _RequestFormState extends State<RequestForm> {
                               if (userSnapshot.hasData &&
                                   userSnapshot.data!.exists) {
                                 final userData = userSnapshot.data!.data()
-                                    as Map<String, dynamic>;
+                                as Map<String, dynamic>;
                                 image = userData['image'] ?? "";
                                 name = userData['Name'];
                                 return CircleAvatar(
@@ -187,15 +191,15 @@ class _RequestFormState extends State<RequestForm> {
                                     child: ClipOval(
                                       child: image == ""
                                           ? const Icon(
-                                              Icons.person,
-                                              size: 30,
-                                            )
+                                        Icons.person,
+                                        size: 30,
+                                      )
                                           : Image.network(
-                                              image,
-                                              fit: BoxFit.cover,
-                                              width: 80,
-                                              height: 80,
-                                            ),
+                                        image,
+                                        fit: BoxFit.cover,
+                                        width: 80,
+                                        height: 80,
+                                      ),
                                     ));
                               } else {
                                 _userImageIcon();
@@ -209,33 +213,43 @@ class _RequestFormState extends State<RequestForm> {
                         ],
                       ),
                       CustomTextField(
+
+                        label: "Food Item Name",
                         controller: itemNameController,
                         hintText: "Food Item Name",
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
-                                MediaQuery.of(context).size.height * 0.01.h),
-                        child: CustomTextField(
+                            MediaQuery.of(context).size.height * 0.01.h),
+                        child: CustomTextField(formatDate: true,
+                          label: "Date",
                           keyboardType: TextInputType.datetime,
                           controller: dateController,
                           hintText: "Date",
+
                         ),
                       ),
                       CustomTextField(
+                       formatTime: true,
+                        label: "Arrival Time ",
                         controller: arrivelTimeController,
                         hintText: "Arrival Time ",
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
-                                MediaQuery.of(context).size.height * 0.01.h),
+                            MediaQuery.of(context).size.height * 0.01.h),
                         child: CustomTextField(
+                          formatTime: true,
+                          label:"Event Time",
                           controller: eventTimeController,
                           hintText: "Event Time",
                         ),
                       ),
                       CustomTextField(
+                        maxLength: 4,
+                        label:"No of People",
                         keyboardType: TextInputType.number,
                         controller: noOfPeopleController,
                         hintText: "No of People",
@@ -243,14 +257,17 @@ class _RequestFormState extends State<RequestForm> {
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
-                                MediaQuery.of(context).size.height * 0.01.h),
+                            MediaQuery.of(context).size.height * 0.01.h),
                         child: CustomTextField(
+                          maxLength: 6,
+                          label:'Fare',
                           keyboardType: TextInputType.number,
                           controller: fareController,
                           hintText: 'Fare',
                         ),
                       ),
                       CustomTextField(
+                        label:"Available Ingredients",
                         controller: availableIngController,
                         hintText: "Available Ingredients",
                       ),

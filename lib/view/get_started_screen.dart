@@ -1,15 +1,16 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
-import 'package:chief/view/signup_chief.dart';
-import 'package:chief/view/signup_user.dart';
+ import 'package:chief/view/user_screens/signup_user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../app_assets.dart';
 import '../global_custom_widgets/custom_app_bar.dart';
 import '../global_custom_widgets/custom_horizontal_line.dart';
 import '../global_custom_widgets/custom_large_button.dart';
-import 'login_screen.dart';
+import 'chef_screens/signup_chef.dart';
+import 'auth/login_screen.dart';
 
 class GetStartedScreen extends StatefulWidget {
   const GetStartedScreen({
@@ -53,6 +54,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                       title: "Yes",
                       ontap: () {
                         Navigator.of(context).pop(true);
+                        SystemNavigator.pop();
                       }),
                 ],
               ),
@@ -69,9 +71,11 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
         ),
         body: Column(children: [
           const Spacer(),
-          Image.asset(
-            AppAssets.imgCookingBro,
-            height: MediaQuery.of(context).size.height * 0.2.h,
+          Flexible(
+            child: Image.asset(
+              AppAssets.imgCookingBro,
+              height: MediaQuery.of(context).size.height * 0.2.h,
+            ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(
@@ -79,10 +83,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             child: CustomLargeButton(
               title: 'Login',
               ontap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+                onTapLogin(context);
               },
             ),
           ),
@@ -91,7 +92,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             padding: EdgeInsets.symmetric(
                 vertical: MediaQuery.of(context).size.height * 0.04.h),
             child: CustomLargeButton(
-                title: 'Sign up as a chief',
+                title: 'Sign up as a Chef',
                 ontap: () {
                   onTapSignUpAsAChef(context);
                 }),
@@ -115,7 +116,7 @@ onTapLogin(BuildContext context) {
 
 /// Navigates to the signupScreen when the action is triggered.
 onTapSignUpAsAChef(BuildContext context) {
-  Navigator.pushNamed(context, SignupChief.tag);
+  Navigator.pushNamed(context, SignupChef.tag);
 }
 
 /// Navigates to the signupOneScreen when the action is triggered.

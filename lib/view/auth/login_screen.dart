@@ -2,12 +2,12 @@ import 'package:chief/model/app_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../global_custom_widgets/custom_app_bar.dart';
-import '../global_custom_widgets/custom_horizontal_line.dart';
-import '../global_custom_widgets/custom_large_button.dart';
-import '../global_custom_widgets/custom_size.dart';
-import '../global_custom_widgets/custom_text_form_field.dart';
-import '../global_custom_widgets/custom_title_text.dart';
+import '../../global_custom_widgets/custom_app_bar.dart';
+import '../../global_custom_widgets/custom_horizontal_line.dart';
+import '../../global_custom_widgets/custom_large_button.dart';
+import '../../global_custom_widgets/custom_size.dart';
+import '../../global_custom_widgets/custom_text_form_field.dart';
+import '../../global_custom_widgets/custom_title_text.dart';
 import 'forgot_password.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,19 +35,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(children: [
           const CustomTitleText(text: 'Login'),
           CustomTextField(
+            label:"Enter Email",
             controller: numberController,
             hintText: "Enter Email",
             keyboardType: TextInputType.emailAddress,
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.043.h,
-                bottom: MediaQuery.of(context).size.height * 0.001.h),
-            child: CustomTextField(
-              controller: passwordController,
-              hintText: "Enter Password",
-              isPasswordField: true,
-            ),
+          CustomTextField(
+            label: "Enter Password",
+            controller: passwordController,
+            hintText: "Enter Password",
+            isPasswordField: true,
           ),
           Padding(
             padding: EdgeInsets.only(

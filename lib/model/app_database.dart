@@ -1,15 +1,16 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:chief/view/chief_dashboard_screen.dart';
-import 'package:chief/view/login_screen.dart';
-import 'package:chief/view/user_dashboard_screen.dart';
+ import 'package:chief/view/auth/login_screen.dart';
+import 'package:chief/view/user_screens/User_dashboard_request_form.dart';
 import 'package:chief/view/get_started_screen.dart';
-import 'package:chief/view/user_myrequests_screen.dart';
+import 'package:chief/view/user_screens/user_myrequests_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../view/chef_screens/chef_dashboard_screen.dart';
 
 class AppDatabase {
   final _auth = FirebaseAuth.instance;
@@ -34,14 +35,14 @@ class AppDatabase {
         Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const ShiefPendingRequest()),
+          MaterialPageRoute(builder: (context) =>   ChefPendingRequests()),
           (Route<dynamic> route) => false,
         );
       } else if (role == 'user') {
         Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const RequestForm()),
+          MaterialPageRoute(builder: (context) => const UserDashboardRequestForm()),
           (Route<dynamic> route) => false,
         );
       }
@@ -218,6 +219,7 @@ class AppDatabase {
     String image,
     String collection,
     String action,
+    String status
   ) async {
     final user = _auth.currentUser;
     try {
@@ -236,7 +238,8 @@ class AppDatabase {
         'Action': action,
         'Availabe_Ingredients': availabeingred,
         'image': image,
-        'timestamp': FieldValue.serverTimestamp()
+        'timestamp': FieldValue.serverTimestamp(),
+        'status': status
       });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
@@ -244,7 +247,130 @@ class AppDatabase {
     if (collection == 'request_form') {
       Fluttertoast.showToast(msg: "Request Added");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const PendingRequestScreen()));
+          builder: (context) =>
+
+          UserDashboardRequestForm()
+      ));
     }
   }
+
+
+  Future<void> updateRequest(
+      BuildContext context,
+      String documentId,
+      String userid,
+      String itemName,
+      String date,
+      String arrivelTime,
+      String eventTime,
+      String noOfPeople,
+      String fare,
+      String availabeingred,
+      String name,
+      String image,
+      String collection,
+      String action,
+      String status
+      ) async {
+    final user = _auth.currentUser;
+    try {
+      CollectionReference ref = FirebaseFirestore.instance.collection(collection);
+      ref.doc(documentId).update({
+        'userid': user!.uid,
+        'addedby': userid,
+        'User_Name': name,
+        'Item_Name': itemName,
+        'Date': date,
+        'Arrivel_Time': arrivelTime,
+        'Event_Time': eventTime,
+        'No_of_People': noOfPeople,
+        'Fare': fare,
+        'Action': action,
+        'Availabe_Ingredients': availabeingred,
+        'image': image,
+        'status': status
+        // Note: serverTimestamp() should not be updated if you want to retain the original creation time
+      });
+      Fluttertoast.showToast(msg: "Request Updated");
+      // Navigator.of(context).pop(); // Typically you might want to pop back instead of navigating to a new route
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
+  }
+
+
+// Method to handle acceptance of a request by a user
+  Future<void> acceptRequestAndUpdateVisibility(String requestId) async {
+    await FirebaseFirestore.instance.collection('new_requestform').doc(requestId).update({
+      'status': 'accepted', // Indicate that the request has been accepted
+      'isVisibleToChef': false, // No longer visible on Chef's Dashboard
+      'isVisibleToUser': true, // Still visible to the user in My Orders
+    }).then((value) {
+      Fluttertoast.showToast(msg: "Request moved to My Orders");
+    }).catchError((error) {
+      Fluttertoast.showToast(msg: "Error updating request: $error");
+    });
+  }
+
+  Future<void> updateRequestStatus(String requestId, String status) async {
+    try {
+      await _firestore.collection('request_form').doc(requestId).update({
+        'status': status,
+      });
+    } catch (e) {
+      // Handle exceptions
+      print(e);
+    }
+  }
+  // Future<void> userAcceptsRequest(String requestId) async {
+  //   await FirebaseFirestore.instance.collection('new_requestform').doc(requestId).update({
+  //     'status': 'accepted',
+  //     'isVisibleToChef': false,  // This request should no longer be visible in the chef's request queue
+  //     'isVisibleToUser': true,   // Should still be visible to the user until completely processed
+  //     'isVisibleInMyOrders': true // Now it should be visible in the user's My Orders section
+  //   });
+  // }
+
+
+  // Method to handle acceptance of a request by a chef
+// In AppDatabase class
+  // In AppDatabase or wherever you handle Firestore operations
+  Future<void> chefAcceptsRequest(String requestId) async {
+    await FirebaseFirestore.instance.collection('new_requestform').doc(requestId).update({
+      'Action': 'in processing',  // Indicate that the chef has accepted the request but it's not finalized
+    }).then((value) {
+      Fluttertoast.showToast(msg: "Request accepted, awaiting user confirmation.");
+    }).catchError((error) {
+      Fluttertoast.showToast(msg: "Error accepting request: $error");
+    });
+  }
+
+
+// Method to handle acceptance of a request by a user
+  Future<void> userAcceptsRequest(String requestId) async {
+    await _firestore.collection('accepted_requests').doc(requestId).update({
+      'status': 'accepted',
+      'isVisibleToChef': false,  // This request should no longer be visible in the chef's request queue
+      'isVisibleToUser': true,   // Should still be visible to the user until completely processed
+      // ...additional updates if needed
+    }).then((value) {
+      Fluttertoast.showToast(msg: "Request accepted by user.");
+    }).catchError((error) {
+      Fluttertoast.showToast(msg: "Error on user's acceptance: $error");
+    });
+  }
+  Future<void> acceptRequest(BuildContext context, String documentId) async {
+    await _firestore.collection('request_form').doc(documentId).update({
+      'Action': 'accepted', // Update the action to 'accepted'
+      'isVisibleToChef': false, // Make it invisible to other chefs
+    }).then((_) {
+      Fluttertoast.showToast(msg: 'Request accepted.');
+      // Optionally, navigate to the chef's dashboard or update the UI
+    }).catchError((error) {
+      Fluttertoast.showToast(msg: 'Error accepting request: $error');
+    });
+  }
+
+
+
 }

@@ -2,12 +2,12 @@ import 'package:chief/model/app_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../app_assets.dart';
-import '../global_custom_widgets/custom_app_bar.dart';
-import '../global_custom_widgets/custom_horizontal_line.dart';
-import '../global_custom_widgets/custom_large_button.dart';
-import '../global_custom_widgets/custom_text_form_field.dart';
-import '../global_custom_widgets/custom_title_text.dart';
+import '../../app_assets.dart';
+import '../../global_custom_widgets/custom_app_bar.dart';
+import '../../global_custom_widgets/custom_horizontal_line.dart';
+import '../../global_custom_widgets/custom_large_button.dart';
+import '../../global_custom_widgets/custom_text_form_field.dart';
+import '../../global_custom_widgets/custom_title_text.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});

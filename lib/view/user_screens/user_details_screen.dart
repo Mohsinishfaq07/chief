@@ -1,18 +1,17 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:io';
-
 import 'package:chief/global_custom_widgets/custom_app_bar.dart';
 import 'package:chief/global_custom_widgets/custom_product_detail_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../global_custom_widgets/custom_userinfo_section.dart';
-import 'forgot_password.dart';
+import '../../global_custom_widgets/custom_title_text.dart';
+import '../../global_custom_widgets/custom_userinfo_section.dart';
+import '../auth/forgot_password.dart';
 
-class ChefDetails extends StatelessWidget {
-  ChefDetails({super.key, this.userid});
-  static const String tag = "ChefDetails";
+class UserDetails extends StatelessWidget {
+  UserDetails({super.key, this.userid});
+  static const String tag = "UserDetails";
   String? userid;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -23,13 +22,12 @@ class ChefDetails extends StatelessWidget {
       key: _scaffoldKey,
       appBar: const CustomAppBarWidget(
         showBackButton: true,
-        title: 'Chief Details',
       ),
       body: Padding(
-        padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 20),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Column(
           children: [
-            //  const CustomTitleText(text: ),
+            const CustomTitleText(text: 'User Details'),
             RequestCard(user: userid!),
             const Spacer(),
             const BottomRightImage(),
@@ -48,7 +46,7 @@ class RequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('chief_users')
+            .collection('users')
             .doc(user)
             .snapshots(),
         builder: (context, snapshot) {
@@ -80,7 +78,6 @@ class RequestCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                     
                     ],
                   ),
                   Card(
@@ -99,35 +96,6 @@ class RequestCard extends StatelessWidget {
                               ),
                               CustomProductDetailContainer(
                                 title: userData['Email'],
-                              ),
-                              CustomProductDetailContainer(
-                                title: userData['Specialities'],
-                              ),
-                              CustomProductDetailContainer(
-                                title: userData['Work Experience'],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Container(
-                                  width: double.infinity, // Set container width
-                                  height: 100, // Set container height
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Colors.pinkAccent, // Placeholder color
-                                    borderRadius: BorderRadius.circular(
-                                        10), // Optional: Add border radius
-                                  ),
-                                  child: userData['Certificate image'] == ""
-                                      ? const Center(
-                                          child:
-                                              Text('No Certificate added yet'))
-                                      : Image.file(
-                                          File(userData[
-                                              'Certificate image']), // Path to your image file
-                                          fit: BoxFit
-                                              .cover, // Adjust the image size to cover the container
-                                        ),
-                                ),
                               ),
                             ],
                           ),

@@ -1,28 +1,74 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RequestData extends ChangeNotifier {
-  List<DocumentSnapshot> _requests = [];
+  List<QueryDocumentSnapshot> _requests = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Defined here
 
-  List<DocumentSnapshot> get requests => _requests;
+  List<QueryDocumentSnapshot> get requests => _requests;
 
-  void updateRequests(List<DocumentSnapshot> newRequests) {
+  void updateRequests(List<QueryDocumentSnapshot> newRequests) {
     _requests = newRequests;
     notifyListeners();
   }
 
-  Future<void> rejectRequest(String documentId) async {
+  // Future<void> rejectRequest(String documentId) async {
+  //   try {
+  //     await _firestore.collection('request_form').doc(documentId).delete(); // Use _firestore
+  //     _requests.removeWhere((request) => request.id == documentId); // Update local data
+  //     notifyListeners();
+  //   } catch (error) {
+  //     if (kDebugMode) {
+  //       print('Error rejecting request: $error');
+  //     }
+  //   }
+  // }
+
+  // Method to handle acceptance
+  Future<void> acceptRequest(BuildContext context, String documentId) async {
     try {
-      await FirebaseFirestore.instance.collection('request_form').doc(documentId).delete();
-      // Remove the rejected request from the local list
-      _requests.removeWhere((request) => request.id == documentId);
-      notifyListeners();
-    } catch (error) {
-      if (kDebugMode) {
-        print('Error rejecting request: $error');
-      }
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+
+      await _firestore.collection('request_form').doc(documentId).update({
+        'status': 'accepted'
+      });
+
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Request accepted");
+    } catch (e) {
+      Navigator.pop(context); // Close the loading indicator
+      Fluttertoast.showToast(msg: "Failed to accept request: $e");
+    }
+  }
+
+  // Method to handle rejection
+  Future<void> rejectRequest(BuildContext context, String documentId) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+
+      await _firestore.collection('request_form').doc(documentId).update({
+        'status': 'rejected'
+      });
+
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Request rejected");
+    } catch (e) {
+      Navigator.pop(context); // Close the loading indicator
+      Fluttertoast.showToast(msg: "Failed to reject request: $e");
     }
   }
 }
