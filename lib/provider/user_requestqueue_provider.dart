@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ class UserRequestQueueProvider extends ChangeNotifier {
   List<DocumentSnapshot> _requests = [];
 
   List<DocumentSnapshot> get requests => _requests;
+
 
   void updateRequests(List<DocumentSnapshot> newRequests) {
     _requests = newRequests;

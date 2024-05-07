@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -84,7 +86,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           filled: true,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(9.h),
-            borderSide: BorderSide(
+            borderSide: const BorderSide(
               color: Colors.transparent, // Adjust the border color as needed
               width: 1.0, // Adjust the border width as needed
             ),

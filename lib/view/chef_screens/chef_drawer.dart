@@ -1,5 +1,5 @@
- import 'package:chief/view/get_started_screen.dart';
-  import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chief/view/get_started_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../app_assets.dart';
@@ -31,19 +31,19 @@ class ChefDrawer extends StatelessWidget {
             context: context,
             icon: Icons.label_important_outline,
             text: 'All Requests',
-            routeName: ChefPendingRequests.tag,
+            routeName: ChefDashboardScreen.tag,
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.query_builder,
             text: 'Requests in Queue',
-            routeName: ChiefRequestScreen.tag,
+            routeName: ChiefRequestQueueScreen.tag,
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.shopping_bag_outlined,
             text: 'My Orders',
-            routeName: ChefDashboardScreen.tag,
+            routeName: ChefMyOrderScreen.tag,
           ),
           _buildDrawerItem(
             context: context,

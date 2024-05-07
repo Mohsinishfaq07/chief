@@ -1,7 +1,5 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
-import 'package:chief/provider/chief_orders_provider.dart';
- import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/model/app_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,15 +13,15 @@ import '../../provider/chief_dashboard_provider.dart';
 import '../user_screens/user_details_screen.dart';
 import 'chef_drawer.dart';
 
-class ChefDashboardScreen extends StatefulWidget {
-  const ChefDashboardScreen({super.key});
-  static const String tag = "ChefDashboardScreen";
+class ChefMyOrderScreen extends StatefulWidget {
+  const ChefMyOrderScreen({super.key});
+  static const String tag = "ChefMyOrderScreen";
 
   @override
-  State<ChefDashboardScreen> createState() => _ChefDashboardScreenState();
+  State<ChefMyOrderScreen> createState() => _ChefMyOrderScreenState();
 }
 
-class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
+class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
   AppDatabase database = AppDatabase();
   final user = FirebaseAuth.instance.currentUser;
 
@@ -42,20 +40,20 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
             child: Consumer<RequestData>(builder: (context, requestData, _) {
               return StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection('request_form')
-                    .where('Action',
+                    .collection('accepted_requests')
+                    .where('shiefid',
                     isEqualTo:
-                    "") // Filtering for documents with an empty 'Action' field
+                    user!.uid) // Filtering for documents with an empty 'Action' field
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
-                    requestData.updateRequests(snapshot.data!.docs);
+                  //  requestData.updateRequests(snapshot.data!.docs);
                     return ListView.builder(
-                      itemCount: requestData.requests.length,
+                      itemCount: snapshot.data!.docs.length,
                       itemBuilder: (BuildContext context, int index) {
                         DocumentSnapshot document =
-                        requestData.requests[index];
+                        snapshot.data!.docs[index];
                         Map<String, dynamic>? data =
                         document.data() as Map<String, dynamic>;
                         Timestamp timestamp = data['timestamp'];
@@ -67,7 +65,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                         int day = dateTime.day;
                         int hour = dateTime.hour;
                         int minute = dateTime.minute;
-                        return data['status'] == 'approved'?  Card(
+                        return  Card(
                           elevation: 4,
                           child: Padding(
                             padding: const EdgeInsets.all(10),
@@ -86,6 +84,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                         ],
                                       ),
                                       Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           CustomProductDetailSmallContainer(
                                               label: "Item",
@@ -113,7 +112,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                             child:
                                             CustomProductDetailSmallContainer(
                                               label: "Fare",
-                                              title: data['Fare'],
+                                              title: data['Fare'].toString(),
                                             ),
                                           ),
                                           CustomProductDetailSmallContainer(
@@ -160,7 +159,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                         icon: const Icon(Icons.close,
                                             color: Colors.black),
                                         onPressed: () async {
-                                          await database.addrequest(
+                                          await database.addRequest(
                                               context,
                                               data['userid'],
                                               data['Item_Name'],
@@ -226,7 +225,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                           // 'image': image,
                                           // 'timestamp': FieldValue.serverTimestamp(),
                                           // 'status': status,
-                                          database.updateRequest(context, document.id, data['userid'], data['Item_Name'], data['Date'], data['Arrivel_Time'], data['Event_Time'], data['No_of_People'], data['Fare'], data['Availabe_Ingredients'], data['User_Name'], data['image'], 'request_form', data['Action'], 'approved');
+                                        //  database.updateRequest(context, document.id, data['userid'], data['Item_Name'], data['Date'], data['Arrivel_Time'], data['Event_Time'], data['No_of_People'], data['Fare'], data['Availabe_Ingredients'], data['User_Name'], data['image'], 'request_form', data['Action'], 'approved');
                                           //database.updateRequest(context, data['documentId'] ,data['userid'], data['Item_Name'], data['Date'], data['Arrival_Time'], data['Event_Time'], data['No_of_People'], data['Fare'], data['Availabe_Ingredients'], data['name'], data['image'], 'request_form', data['Action'], 'pending');
                                           // database
                                           //     .chefAcceptsRequest(
@@ -255,7 +254,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                               ],
                             ),
                           ),
-                        ): SizedBox();
+                        );
                       },
                     );
                   } else if (snapshot.hasError) {

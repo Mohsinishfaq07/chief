@@ -1,9 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
  import 'package:chief/view/auth/login_screen.dart';
 import 'package:chief/view/user_screens/User_dashboard_request_form.dart';
 import 'package:chief/view/get_started_screen.dart';
-import 'package:chief/view/user_screens/user_myrequests_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -35,7 +34,7 @@ class AppDatabase {
         Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) =>   ChefPendingRequests()),
+          MaterialPageRoute(builder: (context) =>   const ChefDashboardScreen()),
           (Route<dynamic> route) => false,
         );
       } else if (role == 'user') {
@@ -135,7 +134,9 @@ class AppDatabase {
       String speciality,
       String certificate,
       String image,
-      String certificateimage) {
+      String certificateimage,
+     int rating
+      ) {
     var user = _auth.currentUser;
     CollectionReference ref =
         FirebaseFirestore.instance.collection('chief_users');
@@ -151,6 +152,7 @@ class AppDatabase {
       'Certifications': certificate,
       'Certificate image': certificateimage,
       'image': image,
+      'Rating': rating.toString(),
       'role': 'chief',
       'timestamp': FieldValue.serverTimestamp()
     });
@@ -172,7 +174,7 @@ class AppDatabase {
     );
   }
 
-  void userDetailsToFirestore(BuildContext context, String name, String number,
+  void userDetailsToFireStore(BuildContext context, String name, String number,
       String address, String email, String pass, String imagepath) {
     var user = _auth.currentUser;
     CollectionReference ref = FirebaseFirestore.instance.collection('users');
@@ -205,7 +207,7 @@ class AppDatabase {
     );
   }
 
-  Future<void> addrequest(
+  Future<void> addRequest(
     BuildContext context,
     String userid,
     String itemName,
@@ -213,7 +215,7 @@ class AppDatabase {
     String arrivelTime,
     String eventTime,
     String noOfPeople,
-    String fare,
+    int fare,
     String availabeingred,
     String name,
     String image,
@@ -225,6 +227,54 @@ class AppDatabase {
     try {
       CollectionReference ref =
           FirebaseFirestore.instance.collection(collection);
+      ref.doc().set({
+        'userid': user!.uid,
+        'shiefid': '',
+        'User_Name': name,
+        'Item_Name': itemName,
+        'Date': date,
+        'Arrivel_Time': arrivelTime,
+        'Event_Time': eventTime,
+        'No_of_People':noOfPeople,
+        'Fare': fare,
+        'image': image,
+        'Availabe_Ingredients': availabeingred,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
+    if (collection == 'request_form') {
+      Fluttertoast.showToast(msg: "Request Added");
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) =>
+          const UserDashboardRequestForm()
+      ));
+    }
+  }
+  Future<void>  cookSideRequest(
+      BuildContext context,
+      String userid,
+      String itemName,
+      String date,
+      String arrivelTime,
+      String eventTime,
+      String noOfPeople,
+      String fare,
+      String availabeingred,
+      String name,
+      String image,
+      String collection,
+      String action,
+      String status,
+      String cookPhoneNumber,
+      String cookEmail,
+      String cookId
+      ) async {
+    final user = _auth.currentUser;
+    try {
+      CollectionReference ref =
+      FirebaseFirestore.instance.collection(collection);
       ref.doc().set({
         'userid': user!.uid,
         'addedby': userid,
@@ -239,7 +289,11 @@ class AppDatabase {
         'Availabe_Ingredients': availabeingred,
         'image': image,
         'timestamp': FieldValue.serverTimestamp(),
-        'status': status
+        'status': status,
+        'cookPhoneNumber' : cookPhoneNumber,
+        'cookEmail': cookEmail,
+        'cookId' : cookId
+
       });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
@@ -247,15 +301,53 @@ class AppDatabase {
     if (collection == 'request_form') {
       Fluttertoast.showToast(msg: "Request Added");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) =>
-
-          UserDashboardRequestForm()
+          builder: (context) => const UserDashboardRequestForm()
       ));
     }
   }
 
+   Future<void> addacceptedRequest(
+      BuildContext context,
+      String userid,
+      String shiefid,
+      String itemName,
+      String date,
+      String arrivelTime,
+      String eventTime,
+      String noOfPeople,
+      int fare,
+      String availabeingred,
+      String name,
+      String image,
+      String collection,
+      ) async {
+    try {
+      CollectionReference ref = FirebaseFirestore.instance.collection(collection);
+      ref.doc().set({
+        'shiefid': shiefid,
+        'userid': userid,
+        'User_Name': name,
+        'Item_Name': itemName,
+        'Date': date,
+        'Arrivel_Time': arrivelTime,
+        'Event_Time': eventTime,
+        'No_of_People': noOfPeople,
+        'Fare': fare,
+        'Availabe_Ingredients': availabeingred,
+        'image': image,
+        'timestamp': FieldValue.serverTimestamp(),
+        // Note: serverTimestamp() should not be updated if you want to retain the original creation time
+      });
+      Fluttertoast.showToast(msg: "Request Updated");
+      // Navigator.of(context).pop(); // Typically you might want to pop back instead of navigating to a new route
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e');
+    }
+  }
 
-  Future<void> updateRequest(
+
+
+  Future<void> addShiefrRequest(
       BuildContext context,
       String documentId,
       String userid,
@@ -264,31 +356,33 @@ class AppDatabase {
       String arrivelTime,
       String eventTime,
       String noOfPeople,
-      String fare,
+      int fare,
       String availabeingred,
       String name,
       String image,
       String collection,
-      String action,
-      String status
+      String rating,
+      int newfare,
       ) async {
     final user = _auth.currentUser;
     try {
       CollectionReference ref = FirebaseFirestore.instance.collection(collection);
-      ref.doc(documentId).update({
-        'userid': user!.uid,
-        'addedby': userid,
+      ref.doc().set({
+        'shiefid': user!.uid,
+        'userid': userid,
+        'oldDocumentid': documentId,
         'User_Name': name,
         'Item_Name': itemName,
         'Date': date,
         'Arrivel_Time': arrivelTime,
         'Event_Time': eventTime,
         'No_of_People': noOfPeople,
+        'New_fare': newfare,
         'Fare': fare,
-        'Action': action,
+        'Shiefrating,': rating,
         'Availabe_Ingredients': availabeingred,
         'image': image,
-        'status': status
+        'timestamp': FieldValue.serverTimestamp(),
         // Note: serverTimestamp() should not be updated if you want to retain the original creation time
       });
       Fluttertoast.showToast(msg: "Request Updated");
@@ -372,5 +466,54 @@ class AppDatabase {
   }
 
 
+  Future<String> getUserName() async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore.collection('allusers').doc(user.uid).get();
+        if (snapshot.exists && snapshot.data() != null) {
+          return snapshot.data()!['Name'] ?? 'No Name';  // Assuming 'Name' is the field in Firestore
+        } else {
+          return 'No Name';
+        }
+      } else {
+        return 'No User';
+      }
+    } catch (e) {
+      print('Error fetching user name: $e');
+      return 'Error';
+    }
+  }
+  Future<void> completeOrder(String documentId) async {
+    try {
+      // Update the order's status to 'completed'
+      await _firestore.collection('accepted_requests').doc(documentId).update({
+        'status': 'completed',
+      });
+      // Handle any other updates or cleanup operations here
+      print("Order marked as completed.");
+    } catch (e) {
+      print("An error occurred while completing the order: $e");
+      // Handle any errors here
+    }
+  }
+
+  Future<bool> hasRatedChef(String chefId, String userId) async {
+    try {
+      // Assuming there's a collection named 'ratings' where each document represents a rating
+      // and has 'chefId' and 'userId' fields
+      var querySnapshot = await _firestore
+          .collection('ratings')
+          .where('chefId', isEqualTo: chefId)
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      // If the query returns any documents, it means the user has rated this chef
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print("Error checking rating status: $e");
+      return false; // or handle the exception as needed
+    }
+  }
 
 }

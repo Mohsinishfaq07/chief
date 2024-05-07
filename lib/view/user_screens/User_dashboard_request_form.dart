@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, deprecated_member_use
+// ignore_for_file: must_be_immutable, deprecated_member_use, file_names
 
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/model/app_database.dart';
@@ -107,7 +107,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
         },
         child: Scaffold(
           key: _scaffoldKey,
-          drawer: const CustomDrawer(),
+          drawer: const UserDrawer(),
           appBar: AppBar(backgroundColor: Colors.pink.shade200),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -123,7 +123,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                     availableIngController.text.isEmpty) {
                   Fluttertoast.showToast(msg: 'Fill the above field');
                 } else {
-                  database.addrequest(
+                  database.addRequest(
                       context,
                       '',
                       itemNameController.text,
@@ -131,7 +131,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                       arrivelTimeController.text,
                       eventTimeController.text,
                       noOfPeopleController.text,
-                      fareController.text,
+                      int.parse(fareController.text),
                       availableIngController.text,
                       name,
                       image,
@@ -217,6 +217,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                         label: "Food Item Name",
                         controller: itemNameController,
                         hintText: "Food Item Name",
+                         maxLength: 10,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
@@ -231,6 +232,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                         ),
                       ),
                       CustomTextField(
+                        keyboardType: TextInputType.number,
                        formatTime: true,
                         label: "Arrival Time ",
                         controller: arrivelTimeController,
@@ -241,6 +243,8 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                             vertical:
                             MediaQuery.of(context).size.height * 0.01.h),
                         child: CustomTextField(
+                          keyboardType: TextInputType.number,
+
                           formatTime: true,
                           label:"Event Time",
                           controller: eventTimeController,
@@ -248,6 +252,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                         ),
                       ),
                       CustomTextField(
+
                         maxLength: 4,
                         label:"No of People",
                         keyboardType: TextInputType.number,

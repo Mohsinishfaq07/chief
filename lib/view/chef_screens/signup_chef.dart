@@ -358,7 +358,8 @@ class _SignupChefState extends State<SignupChef> {
                     speciality,
                     certificate,
                     _image,
-                    certificateImage),
+                    certificateImage,
+                    0),
               });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');

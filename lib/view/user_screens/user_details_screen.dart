@@ -1,10 +1,10 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:chief/global_custom_widgets/custom_app_bar.dart';
-import 'package:chief/global_custom_widgets/custom_product_detail_container.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_title_text.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
 import '../auth/forgot_password.dart';
@@ -24,7 +24,7 @@ class UserDetails extends StatelessWidget {
         showBackButton: true,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: 2.w),
         child: Column(
           children: [
             const CustomTitleText(text: 'User Details'),
@@ -60,48 +60,34 @@ class RequestCard extends StatelessWidget {
           }
           var userData = snapshot.data!.data() as Map<String, dynamic>;
           return Card(
-            color: Colors.pink.shade200,
             elevation: 4,
             child: Padding(
-              padding: EdgeInsets.all(12.h),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
                     children: [
-                      Column(
-                        children: [
-                          UserInfoSection(image: userData['image']),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5.0),
-                            child: Text(userData['Name']),
-                          ),
-                        ],
+                      UserInfoSection(image: userData['image']),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Text(userData['Name']),
                       ),
                     ],
                   ),
-                  Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: EdgeInsets.all(12.h),
-                      child: Column(
-                        children: <Widget>[
-                          Column(
-                            children: [
-                              CustomProductDetailContainer(
-                                title: userData['Address'],
-                              ),
-                              CustomProductDetailContainer(
-                                title: userData['Number'],
-                              ),
-                              CustomProductDetailContainer(
-                                title: userData['Email'],
-                              ),
-                            ],
-                          ),
-                        ],
+                  Column(crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomProductDetailSmallContainer(
+                          label: "Address", title: userData['Address']),
+                      CustomProductDetailSmallContainer(
+                        label: "Number",
+                        title: userData['Number'],
                       ),
-                    ),
+                      CustomProductDetailSmallContainer(
+                        label: "Email",
+                        title: userData['Email'],
+                      ),
+                    ],
                   ),
                 ],
               ),

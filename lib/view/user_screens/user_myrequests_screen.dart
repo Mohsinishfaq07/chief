@@ -1,14 +1,10 @@
 // ignore_for_file: deprecated_member_use, must_be_immutable
 
-import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
-import 'package:chief/provider/user_myrequest_provider.dart';
 import 'package:chief/view/user_screens/user_drawer.dart';
-import 'package:chief/model/app_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
@@ -34,7 +30,7 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
               style: TextStyle(fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: Colors.pink.shade200),
-      drawer: const CustomDrawer(),
+      drawer: const UserDrawer(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: StreamBuilder<QuerySnapshot>(
@@ -89,13 +85,14 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
               children: [
                 UserInfoSection(image:imageUrl),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomProductDetailSmallContainer(title: itemName),
                     CustomProductDetailSmallContainer(title: numberOfPeople),
                     CustomProductDetailSmallContainer(title: arrivalTime),
                   ],
                 ),
-                Column(
+                Column(crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomProductDetailSmallContainer(title: fare),
                     CustomProductDetailSmallContainer(title: date),

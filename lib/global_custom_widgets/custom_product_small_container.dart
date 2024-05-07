@@ -37,13 +37,13 @@ class CustomProductDetailSmallContainer extends StatelessWidget {
             if (label != null)
               Text(
                 label!,
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               ),
-            const SizedBox(width: 8),  // Provides spacing between label and title
+            const SizedBox(width: 2),  // Provides spacing between label and title
             Text(
               limitWords(title, 8),
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.black),
             ),
           ],
         ),

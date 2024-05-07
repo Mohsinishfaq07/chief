@@ -62,7 +62,8 @@ class _SignupUserState extends State<SignupUser> {
                       children: [
                         const Spacer(),
                         const CustomTitleText(
-                          text: 'Signup User', // Only the text parameter is required
+                          text:
+                              'Signup User', // Only the text parameter is required
                         ),
                         const Spacer(),
                         GestureDetector(
@@ -71,7 +72,8 @@ class _SignupUserState extends State<SignupUser> {
                           },
                           child: userSelectedImage
                               ? // Check if user has selected an image
-                              CircleAvatar( radius: 50,
+                              CircleAvatar(
+                                  radius: 50,
                                   child: ClipOval(
                                     child: Image.file(
                                       File(imagePath!),
@@ -120,65 +122,68 @@ class _SignupUserState extends State<SignupUser> {
                         ),
                       ],
                     ),
-                    CustomTextField(label: "Enter name",
+                    CustomTextField(
+                      label: "Enter name",
                       controller: nameController,
                       hintText: "Enter name",
                       height: MediaQuery.of(context).size.height * 0.056.h,
                       width: MediaQuery.of(context).size.width * 0.7.w,
                     ),
-
                     Padding(
                       padding: EdgeInsets.symmetric(
                           vertical:
                               MediaQuery.of(context).size.height * 0.02.h),
                       child: CustomTextField(
-                        label:"Enter number",
-                        controller: numberController,maxLength: 11,
+                        label: "Enter number",
+                        controller: numberController,
+                        maxLength: 11,
                         keyboardType: TextInputType.number,
                         hintText: "Enter number",
                         height: MediaQuery.of(context).size.height * 0.056.h,
                         width: MediaQuery.of(context).size.width * 0.7.w,
                       ),
                     ),
-                    CustomTextField(label:"Enter your location",
+                    CustomTextField(
+                      label: "Enter your location",
                       controller: addressController,
                       hintText: "Enter your location",
                       height: MediaQuery.of(context).size.height * 0.056.h,
                       width: MediaQuery.of(context).size.width * 0.7.w,
                     ),
-
                     Padding(
                       padding: EdgeInsets.symmetric(
                           vertical:
                               MediaQuery.of(context).size.height * 0.02.h),
-                      child:  CustomTextField(label:"Enter gmail",
-                        controller:gmailController,
+                      child: CustomTextField(
+                        label: "Enter gmail",
+                        controller: gmailController,
                         hintText: "Enter gmail",
                         height: MediaQuery.of(context).size.height * 0.056.h,
                         width: MediaQuery.of(context).size.width * 0.7.w,
                       ),
-
-
                     ),
-                    CustomTextField(label:"Enter Password",
-                      controller:passwordController,
-                      hintText: "Enter Password",isPasswordField: true,
+                    CustomTextField(
+                      label: "Enter Password",
+                      controller: passwordController,
+                      hintText: "Enter Password",
+                      isPasswordField: true,
                       height: MediaQuery.of(context).size.height * 0.056.h,
                       width: MediaQuery.of(context).size.width * 0.7.w,
                     ),
-
                     Padding(
                       padding: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02.h),
                       child:
-                      // CustomSmallTextField(
-                      //   keyboardType: TextInputType.visiblePassword,
-                      //   controller: confirmPasswordController,
-                      //   hintText: "Confirm your Password",
-                      // ),
-                      CustomTextField(label:"Confirm your Password",
-                        controller:confirmPasswordController,
-                        hintText: "Confirm your Password",isPasswordField: true,
+                          // CustomSmallTextField(
+                          //   keyboardType: TextInputType.visiblePassword,
+                          //   controller: confirmPasswordController,
+                          //   hintText: "Confirm your Password",
+                          // ),
+                          CustomTextField(
+                        label: "Confirm your Password",
+                        controller: confirmPasswordController,
+                        hintText: "Confirm your Password",
+                        isPasswordField: true,
                         height: MediaQuery.of(context).size.height * 0.056.h,
                         width: MediaQuery.of(context).size.width * 0.7.w,
                       ),
@@ -202,7 +207,8 @@ class _SignupUserState extends State<SignupUser> {
                       passwordController.text.isEmpty) {
                     Fluttertoast.showToast(msg: 'Please fill the above fields');
                   } else {
-                    if (confirmPasswordController.text == passwordController.text) {
+                    if (confirmPasswordController.text ==
+                        passwordController.text) {
                       onTapSignupUser(
                           context,
                           nameController.text,
@@ -244,7 +250,7 @@ class _SignupUserState extends State<SignupUser> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((uid) => {
-                database.userDetailsToFirestore(
+                database.userDetailsToFireStore(
                     context, name, number, address, email, pass, _image ?? "")
               });
     } catch (e) {

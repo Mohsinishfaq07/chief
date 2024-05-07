@@ -1,15 +1,24 @@
-import 'package:flutter/foundation.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class RequestData extends ChangeNotifier {
   List<QueryDocumentSnapshot> _requests = [];
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Defined here
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Defined here
 
   List<QueryDocumentSnapshot> get requests => _requests;
 
-  void updateRequests(List<QueryDocumentSnapshot> newRequests) {
+  String _fare = "";
+  String get fare => _fare;
+  void updateFare(String newRequests) {
+    _fare = newRequests;
+    notifyListeners();
+  }
+
+  void updaeRequests(List<QueryDocumentSnapshot> newRequests) {
     _requests = newRequests;
     notifyListeners();
   }
@@ -37,9 +46,10 @@ class RequestData extends ChangeNotifier {
         },
       );
 
-      await _firestore.collection('request_form').doc(documentId).update({
-        'status': 'accepted'
-      });
+      await _firestore
+          .collection('request_form')
+          .doc(documentId)
+          .update({'status': 'accepted'});
 
       Navigator.pop(context);
       Fluttertoast.showToast(msg: "Request accepted");
@@ -60,9 +70,10 @@ class RequestData extends ChangeNotifier {
         },
       );
 
-      await _firestore.collection('request_form').doc(documentId).update({
-        'status': 'rejected'
-      });
+      await _firestore
+          .collection('request_form')
+          .doc(documentId)
+          .update({'status': 'rejected'});
 
       Navigator.pop(context);
       Fluttertoast.showToast(msg: "Request rejected");

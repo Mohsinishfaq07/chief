@@ -1,4 +1,4 @@
- import 'package:chief/view/chef_screens/chef_dashboard_screen.dart';
+import 'package:chief/view/chef_screens/chef_dashboard_screen.dart';
 import 'package:chief/view/chef_screens/chef_myorders_screen.dart.dart';
 import 'package:chief/view/chef_screens/chef_request_queue_screen.dart';
 import 'package:chief/view/chef_screens/signup_chef.dart';
@@ -10,7 +10,7 @@ import 'package:chief/view/get_started_screen.dart';
 import 'package:chief/view/auth/login_screen.dart';
 import 'package:chief/view/rating_screens/rating_screen.dart';
 import 'package:chief/view/user_screens/User_dashboard_request_form.dart';
- import 'package:chief/view/user_screens/signup_user.dart';
+import 'package:chief/view/user_screens/signup_user.dart';
 import 'package:chief/view/splash_screen.dart';
 import 'package:chief/view/user_screens/user_myrequests_screen.dart';
 import 'package:flutter/material.dart';
@@ -60,21 +60,22 @@ Route _generateRoute(RouteSettings settings) {
     case SignupChef.tag:
       return _createRightToLeftRoute(const SignupChef(), settings);
     case UserDashboardRequestForm.tag:
-      return _createRightToLeftRoute(const UserDashboardRequestForm(), settings);
-    case RatingScreen.tag:
-      return _createRightToLeftRoute(const RatingScreen(), settings);
-    case DashboardRequestScreen.tag:
-      return _createRightToLeftRoute(DashboardRequestScreen(), settings);
-    case UserRequestQueueScreen.tag:
-      return _createRightToLeftRoute(  const UserRequestQueueScreen(), settings);
-    case ChiefRequestScreen.tag:
-      return _createRightToLeftRoute(ChiefRequestScreen(), settings);
+      return _createRightToLeftRoute(
+          const UserDashboardRequestForm(), settings);
     case ChefDashboardScreen.tag:
       return _createRightToLeftRoute(const ChefDashboardScreen(), settings);
+    case RatingScreen.tag:
+      return _createRightToLeftRoute(const RatingScreen(), settings);
+    case UserMyOrdersScreen.tag:
+      return _createRightToLeftRoute(UserMyOrdersScreen(), settings);
+    case UserRequestQueueScreen.tag:
+      return _createRightToLeftRoute(const UserRequestQueueScreen(), settings);
+    case ChiefRequestQueueScreen.tag:
+      return _createRightToLeftRoute(ChiefRequestQueueScreen(), settings);
+    case ChefMyOrderScreen.tag:
+      return _createRightToLeftRoute(const ChefMyOrderScreen(), settings);
     case PendingRequestScreen.tag:
       return _createRightToLeftRoute(const PendingRequestScreen(), settings);
-    case ChefPendingRequests.tag:
-      return _createRightToLeftRoute(  ChefPendingRequests(), settings);
     case UserDetails.tag:
       return _createRightToLeftRoute(UserDetails(), settings);
 
