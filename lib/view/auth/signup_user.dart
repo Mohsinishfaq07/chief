@@ -68,21 +68,17 @@ class _SignupUserState extends State<SignupUser> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            CustomBottomSheet(context);
+                            _pickImage();
                           },
                           child: userSelectedImage
                               ? // Check if user has selected an image
-                              CircleAvatar(
-                                  radius: 50,
-                                  child: ClipOval(
-                                    child: Image.file(
-                                      File(imagePath!),
-                                      fit: BoxFit.cover,
-                                      width: 100,
-                                      height: 100,
-                                    ),
-                                  ),
-                                )
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage: userSelectedImage ? NetworkImage(_image!) : null,
+                            child: !userSelectedImage
+                                ? Icon(Icons.person, size: 50)
+                                : null, // Show an icon if no image is selected
+                          )
                               : Container(
                                   height: 80,
                                   width: 80,
@@ -200,6 +196,10 @@ class _SignupUserState extends State<SignupUser> {
               CustomLargeButton(
                 title: 'Signup',
                 ontap: () {
+                  if (!userSelectedImage) {
+                    Fluttertoast.showToast(msg: 'Please upload an image to proceed');
+                    return;
+                  }
                   if (nameController.text.isEmpty ||
                       numberController.text.isEmpty ||
                       addressController.text.isEmpty ||
@@ -251,7 +251,7 @@ class _SignupUserState extends State<SignupUser> {
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((uid) => {
                 database.userDetailsToFireStore(
-                    context, name, number, address, email, pass, _image ?? "")
+                    context, name, number, address, email, pass, _image ?? "helo")
               });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
@@ -259,63 +259,77 @@ class _SignupUserState extends State<SignupUser> {
     }
   }
 
-  Future<dynamic> CustomBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
+
+
+  // Future<void> _pickImage(ImageSource source) async {
+  //   String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+  //   final picker = ImagePicker();
+  //   final pickedImage = await picker.pickImage(source: source);
+  //   imagePath = pickedImage!.path;
+  //   userSelectedImage = true;
+  //   final Reference storageReference =
+  //       FirebaseStorage.instance.ref().child('images/$filename');
+  //   UploadTask uploadTask = storageReference.putFile(File(pickedImage.path));
+  //   await uploadTask.whenComplete(() => null);
+  //   String imagepath = await storageReference.getDownloadURL();
+  //   setState(() {
+  //     _image = imagepath;
+  //   });
+  // }
+  Future<void> _pickImage() async {
+    showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-            color: Colors.pink[200],
-            height: 120,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                items('Camera', Icons.camera_alt),
-                items(
-                  'Gallery',
-                  Icons.photo_library,
-                )
-              ],
-            ));
-      },
-    );
-  }
-
-  Widget items(String txt, IconData icon) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-        if (txt == 'Gallery') {
-          _pickImage(ImageSource.gallery);
-        } else {
-          _pickImage(ImageSource.camera);
-        }
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 32, // Adjust size as needed
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Pick from gallery'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    _pickImageFromSource(ImageSource.gallery);
+                  }),
+              ListTile(
+                  leading: const Icon(Icons.photo_camera),
+                  title: const Text('Take a picture'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    _pickImageFromSource(ImageSource.camera);
+                  }),
+            ],
           ),
-          Text(txt)
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+  Future<void> _pickImageFromSource(ImageSource source) async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: source);
-    imagePath = pickedImage!.path;
-    userSelectedImage = true;
-    final Reference storageReference =
-        FirebaseStorage.instance.ref().child('images/$filename');
-    UploadTask uploadTask = storageReference.putFile(File(pickedImage.path));
-    await uploadTask.whenComplete(() => null);
-    String imagepath = await storageReference.getDownloadURL();
-    setState(() {
-      _image = imagepath;
-    });
+
+    if (pickedImage != null) {
+      File imageFile = File(pickedImage.path);
+      String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final Reference storageReference = FirebaseStorage.instance.ref().child('images/$filename');
+      UploadTask uploadTask = storageReference.putFile(imageFile);
+
+      try {
+        await uploadTask;
+        final String downloadUrl = await storageReference.getDownloadURL();
+        print("Image URL: $downloadUrl"); // Useful for debugging
+
+        setState(() {
+          userSelectedImage = true;
+          imagePath = imageFile.path;
+          _image = downloadUrl;
+        });
+      } catch (e) {
+        print("Error uploading image: $e");
+        Fluttertoast.showToast(msg: "Error uploading image: $e");
+      }
+    } else {
+      Fluttertoast.showToast(msg: "No image selected");
+    }
   }
 }

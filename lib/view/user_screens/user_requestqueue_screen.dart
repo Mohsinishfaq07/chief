@@ -1,5 +1,4 @@
-import 'package:chief/view/user_screens/user_drawer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +7,7 @@ import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
 import '../../model/app_database.dart';
 import '../chef_screens/chef_details_screen.dart';
+import '../drawer/user_drawer.dart';
 
 class UserRequestQueueScreen extends StatefulWidget {
   const UserRequestQueueScreen({super.key});

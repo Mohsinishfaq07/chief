@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
  import 'package:chief/view/auth/login_screen.dart';
-import 'package:chief/view/user_screens/User_dashboard_request_form.dart';
+import 'package:chief/view/dashboard/User_dashboard_request_form.dart';
 import 'package:chief/view/get_started_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../view/chef_screens/chef_dashboard_screen.dart';
+import '../view/dashboard/chef_dashboard_screen.dart';
 
 class AppDatabase {
   final _auth = FirebaseAuth.instance;
@@ -195,6 +195,7 @@ class AppDatabase {
       'id': user.uid,
       'Name': name,
       'Email': email,
+      'image': imagepath,
       'role': 'user',
       'timestamp': FieldValue.serverTimestamp()
     });

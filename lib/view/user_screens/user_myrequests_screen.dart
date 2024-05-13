@@ -1,13 +1,13 @@
 // ignore_for_file: deprecated_member_use, must_be_immutable
 
-import 'package:chief/view/user_screens/user_drawer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
+import '../drawer/user_drawer.dart';
 
 class PendingRequestScreen extends StatefulWidget {
   const PendingRequestScreen({super.key});

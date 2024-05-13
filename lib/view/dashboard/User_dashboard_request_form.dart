@@ -2,8 +2,7 @@
 
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/model/app_database.dart';
-import 'package:chief/view/user_screens/user_drawer.dart';
- import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,13 +13,15 @@ import '../../global_custom_widgets/custom_large_button.dart';
 import '../../global_custom_widgets/custom_size.dart';
 import '../../global_custom_widgets/custom_text_form_field.dart';
 import '../../global_custom_widgets/custom_title_text.dart';
+import '../drawer/user_drawer.dart';
 
 class UserDashboardRequestForm extends StatefulWidget {
   const UserDashboardRequestForm({super.key});
   static const tag = 'UserDashboardRequestForm';
 
   @override
-  State<UserDashboardRequestForm> createState() => _UserDashboardRequestFormState();
+  State<UserDashboardRequestForm> createState() =>
+      _UserDashboardRequestFormState();
 }
 
 class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
@@ -57,6 +58,41 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
     availableIngController.dispose();
   }
 
+  TimeOfDay? selectedArrivalTime;
+  String formatTimeOfDay(TimeOfDay tod) {
+    final hour = tod.hour % 12 == 0 ? 12 : tod.hour % 12; // Convert 24-hour time to 12-hour
+    final minute = tod.minute.toString().padLeft(2, '0');
+    final period = tod.hour >= 12 ? 'PM' : 'AM';
+    return "$hour:$minute $period";
+  }
+
+  void _selectTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedArrivalTime ?? TimeOfDay.now(),
+    );
+    if (picked != null && picked != selectedArrivalTime) {
+      setState(() {
+        selectedArrivalTime = picked;
+        arrivelTimeController.text = formatTimeOfDay(picked);
+      });
+    }
+  }
+  TimeOfDay? selectedEventTime;
+
+// Function to show time picker for event time
+  Future<void> _selectEventTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedEventTime ?? TimeOfDay.now(),
+    );
+    if (picked != null && picked != selectedEventTime) {
+      setState(() {
+        selectedEventTime = picked;
+        eventTimeController.text = formatTimeOfDay(picked);
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -124,21 +160,20 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                   Fluttertoast.showToast(msg: 'Fill the above field');
                 } else {
                   database.addRequest(
-                      context,
-                      '',
-                      itemNameController.text,
-                      dateController.text,
-                      arrivelTimeController.text,
-                      eventTimeController.text,
-                      noOfPeopleController.text,
-                      int.parse(fareController.text),
-                      availableIngController.text,
-                      name,
-                      image,
-                      'request_form',
-                      '',
-                      ''
-                      ,
+                    context,
+                    '',
+                    itemNameController.text,
+                    dateController.text,
+                    arrivelTimeController.text,
+                    eventTimeController.text,
+                    noOfPeopleController.text,
+                    int.parse(fareController.text),
+                    availableIngController.text,
+                    name,
+                    image,
+                    'request_form',
+                    '',
+                    '',
                   );
                 }
               },
@@ -158,7 +193,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                           const Spacer(),
                           const CustomTitleText(
                             text:
-                            'Add Request', // Only the text parameter is required
+                                'Add Request', // Only the text parameter is required
                           ),
                           const Spacer(),
                           FutureBuilder<DocumentSnapshot>(
@@ -171,8 +206,8 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                                   ConnectionState.waiting) {
                                 return const Center(
                                     child: CircularProgressIndicator(
-                                      color: Colors.pink,
-                                    )); // Show loading indicator while waiting for user data
+                                  color: Colors.pink,
+                                )); // Show loading indicator while waiting for user data
                               }
                               if (userSnapshot.hasError) {
                                 return Center(
@@ -183,26 +218,24 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                               if (userSnapshot.hasData &&
                                   userSnapshot.data!.exists) {
                                 final userData = userSnapshot.data!.data()
-                                as Map<String, dynamic>;
+                                    as Map<String, dynamic>;
                                 image = userData['image'] ?? "";
-                                name = userData['Name'];
+                                name = userData['Name'] ?? "No Name";
                                 return CircleAvatar(
                                     radius: 40,
                                     child: ClipOval(
-                                      child: image == ""
+                                      child: image.isEmpty
                                           ? const Icon(
-                                        Icons.person,
-                                        size: 30,
-                                      )
+                                              Icons.person,
+                                              size: 30,
+                                            )
                                           : Image.network(
-                                        image,
-                                        fit: BoxFit.cover,
-                                        width: 80,
-                                        height: 80,
-                                      ),
+                                              image,
+                                              fit: BoxFit.cover,
+                                              width: 80,
+                                              height: 80,
+                                            ),
                                     ));
-                              } else {
-                                _userImageIcon();
                               }
                               return _userImageIcon();
                             },
@@ -213,48 +246,48 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                         ],
                       ),
                       CustomTextField(
-
                         label: "Food Item Name",
                         controller: itemNameController,
                         hintText: "Food Item Name",
-                         maxLength: 10,
+                        maxLength: 10,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
-                            MediaQuery.of(context).size.height * 0.01.h),
-                        child: CustomTextField(formatDate: true,
+                                MediaQuery.of(context).size.height * 0.01.h),
+                        child: CustomTextField(
+                          formatDate: true,
                           label: "Date",
                           keyboardType: TextInputType.datetime,
                           controller: dateController,
                           hintText: "Date",
-
                         ),
                       ),
                       CustomTextField(
+                        onPressedSuffix: _selectTime,
+                        readOnly: true,
                         keyboardType: TextInputType.number,
-                       formatTime: true,
+                        formatTime: true,
                         label: "Arrival Time ",
                         controller: arrivelTimeController,
-                        hintText: "Arrival Time ",
+                        hintText: "Arrival Time ",suffix: Icons.lock_clock,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
-                            MediaQuery.of(context).size.height * 0.01.h),
-                        child: CustomTextField(
-                          keyboardType: TextInputType.number,
-
-                          formatTime: true,
-                          label:"Event Time",
+                                MediaQuery.of(context).size.height * 0.01.h),
+                        child:CustomTextField(
+                          label: "Event Time",
                           controller: eventTimeController,
-                          hintText: "Event Time",
+                          hintText: "Select Event Time",
+                          readOnly: true, // to prevent manual editing
+                          onPressedSuffix: () => _selectEventTime(context),
+                          suffix: Icons.lock_clock,
                         ),
                       ),
                       CustomTextField(
-
                         maxLength: 4,
-                        label:"No of People",
+                        label: "No of People",
                         keyboardType: TextInputType.number,
                         controller: noOfPeopleController,
                         hintText: "No of People",
@@ -262,17 +295,17 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
-                            MediaQuery.of(context).size.height * 0.01.h),
+                                MediaQuery.of(context).size.height * 0.01.h),
                         child: CustomTextField(
                           maxLength: 6,
-                          label:'Fare',
+                          label: 'Fare',
                           keyboardType: TextInputType.number,
                           controller: fareController,
                           hintText: 'Fare',
                         ),
                       ),
                       CustomTextField(
-                        label:"Available Ingredients",
+                        label: "Available Ingredients",
                         controller: availableIngController,
                         hintText: "Available Ingredients",
                       ),

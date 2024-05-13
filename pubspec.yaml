@@ -37,15 +37,17 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_screenutil: ^5.9.0
   flutter_rating_bar: ^4.0.1
-  firebase_core: ^2.24.2
+  firebase_core: ^2.31.0
   cloud_firestore: ^4.13.6
   firebase_auth: ^4.16.0
+  firebase_app_check: ^0.2.2+5
   fluttertoast: ^8.2.4
   file_picker: ^6.1.1
   image_picker: ^1.0.7
   firebase_storage: ^11.6.4
   shared_preferences: ^2.2.2
   provider: ^6.1.1
+
 
 dev_dependencies:
   flutter_test:

@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
-import 'chef_drawer.dart';
+import '../drawer/chef_drawer.dart';
 
 class ChefDashboardScreen extends StatefulWidget {
   const ChefDashboardScreen({super.key});
@@ -210,6 +210,19 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                     document.data() as Map<String, dynamic>;
 
                                 String documentId = document.id;
+                                String itemName =
+                                    data['Item_Name'] ?? 'Unknown item';
+                                String arrivalTime =
+                                    data['Arrivel_Time'] ?? 'No time set';
+                                String eventTime =
+                                    data['Event_Time'] ?? 'No time set';
+                                String fare =
+                                    data['Fare']?.toString() ?? 'No fare';
+                                String noofpeople =
+                                    data['No_of_people'] ?? 'No fare';
+                                String availableIngredients =
+                                    data[
+                                    'Availabe_Ingredients'] ?? '';
 
                                 // Check if the request should be visible
                                 if (!visibleRequests.containsKey(documentId)) {
@@ -251,15 +264,13 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                               children: [
                                                 CustomProductDetailSmallContainer(
                                                     label: "Item",
-                                                    title: data['Item_Name']),
+                                                    title: itemName),
                                                 CustomProductDetailSmallContainer(
                                                     label: "People",
-                                                    title:
-                                                        data['No_of_People']),
+                                                    title: noofpeople),
                                                 CustomProductDetailSmallContainer(
                                                     label: "Arrival",
-                                                    title:
-                                                        data['Arrivel_Time']),
+                                                    title: arrivalTime),
                                               ],
                                             ),
                                             Column(
@@ -274,8 +285,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                   child:
                                                       CustomProductDetailSmallContainer(
                                                     label: "Fare",
-                                                    title:
-                                                        data['Fare'].toString(),
+                                                    title: fare,
                                                   ),
                                                 ),
                                                 CustomProductDetailSmallContainer(
@@ -284,7 +294,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                 ),
                                                 CustomProductDetailSmallContainer(
                                                   label: "Event ",
-                                                  title: data['Event_Time'],
+                                                  title: eventTime,
                                                 ),
                                               ],
                                             )
@@ -319,8 +329,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                             FontWeight.bold),
                                                   ),
                                                   Flexible(
-                                                    child: Text(data[
-                                                        'Availabe_Ingredients']),
+                                                    child: Text( availableIngredients),
                                                   ),
                                                 ],
                                               ))),

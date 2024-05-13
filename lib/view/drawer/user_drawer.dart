@@ -1,21 +1,31 @@
-import 'package:chief/view/get_started_screen.dart';
+import 'package:chief/view/user_screens/user_myorders_screen.dart';
+import 'package:chief/view/user_screens/user_requestqueue_screen.dart';
+import 'package:chief/view/user_screens/user_myrequests_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../app_assets.dart';
-import 'chef_dashboard_screen.dart';
-import 'chef_myorders_screen.dart.dart';
-import 'chef_request_queue_screen.dart';
+import '../../../app_assets.dart';
+import '../../../model/app_database.dart';
+import '../dashboard/User_dashboard_request_form.dart';
+import '../get_started_screen.dart';
 
-class ChefDrawer extends StatelessWidget {
-  const ChefDrawer({super.key});
 
+class UserDrawer extends StatefulWidget {
+  const UserDrawer({super.key});
+
+  @override
+  State<UserDrawer> createState() => _UserDrawerState();
+}
+
+class _UserDrawerState extends State<UserDrawer> {
   void _navigateTo(BuildContext context, String routeName) {
     Navigator.pushNamed(context, routeName);
   }
+  AppDatabase database = AppDatabase();
 
   @override
   Widget build(BuildContext context) {
+
     return Drawer(
       backgroundColor: Colors.pink.shade200,
       child: ListView(
@@ -27,23 +37,29 @@ class ChefDrawer extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.2.h,
             ),
           ),
-          _buildDrawerItem(
+
+           _buildDrawerItem(
             context: context,
             icon: Icons.label_important_outline,
-            text: 'All Requests',
-            routeName: ChefDashboardScreen.tag,
+            text: 'New Request',
+            routeName: UserDashboardRequestForm.tag,
           ),
           _buildDrawerItem(
+              context: context,
+              icon:Icons.query_builder,
+              text: 'Request Queue',
+              routeName: UserRequestQueueScreen.tag),
+          _buildDrawerItem(
             context: context,
-            icon: Icons.query_builder,
-            text: 'Requests in Queue',
-            routeName: ChiefRequestQueueScreen.tag,
+            icon: Icons.tv,
+            text: 'My Requests',
+            routeName: PendingRequestScreen.tag,
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.shopping_bag_outlined,
             text: 'My Orders',
-            routeName: ChefMyOrderScreen.tag,
+            routeName: UserMyOrdersScreen.tag,
           ),
           _buildDrawerItem(
             context: context,
@@ -60,7 +76,7 @@ class ChefDrawer extends StatelessWidget {
     required BuildContext context,
     required IconData icon,
     required String text,
-    String? routeName,
+    required String routeName,
   }) {
     return ListTile(
         leading: Icon(icon, color: Colors.white),
@@ -69,7 +85,7 @@ class ChefDrawer extends StatelessWidget {
           if (text == 'Logout') {
             FirebaseAuth.instance.signOut();
           }
-          _navigateTo(context, routeName!);
+          _navigateTo(context, routeName);
         });
   }
 }

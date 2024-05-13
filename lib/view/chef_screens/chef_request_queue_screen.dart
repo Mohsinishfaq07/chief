@@ -3,14 +3,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
 import '../../model/app_database.dart';
 import '../../provider/chief_dashboard_provider.dart';
+import '../drawer/chef_drawer.dart';
 import '../user_screens/user_details_screen.dart';
-import 'chef_drawer.dart';
 
 class ChiefRequestQueueScreen extends StatelessWidget {
   static const String tag = "ChiefRequestScreen";
@@ -65,63 +66,66 @@ class ChiefRequestQueueScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(2),
                           child: Column(
                             children: <Widget>[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    children: [
-                                      UserInfoSection(image: data['image']),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomProductDetailSmallContainer(
-                                          label: "Item",
-                                          title: data['Item_Name']),
-                                      CustomProductDetailSmallContainer(
-                                          label: "People",
-                                          title: data['No_of_People']),
-                                      CustomProductDetailSmallContainer(
-                                          label: "Arrival:",
-                                          title: data['Arrivel_Time']),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {},
-                                        // {
-                                        //   // Function to show bottom sheet when this widget is tapped
-                                        //   _showFareBottomSheet(
-                                        //       context,
-                                        //       data['Fare'],
-                                        //       document.id);
-                                        // }
-                                        // ,
-                                        child:
-                                            CustomProductDetailSmallContainer(
-                                          label: "Fare:",
-                                          title: data['New_fare'] == 0
-                                              ? data['Fare'].toString()
-                                              : "${data['Fare']}+${data['New_fare'] - data['Fare']}",
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        UserInfoSection(image: data['image']),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CustomProductDetailSmallContainer(
+                                            label: "Item",
+                                            title: data['Item_Name']),
+                                        CustomProductDetailSmallContainer(
+                                            label: "People",
+                                            title: data['No_of_People']),
+                                        CustomProductDetailSmallContainer(
+                                            label: "Arrival:",
+                                            title: data['Arrivel_Time']),
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {},
+                                          // {
+                                          //   // Function to show bottom sheet when this widget is tapped
+                                          //   _showFareBottomSheet(
+                                          //       context,
+                                          //       data['Fare'],
+                                          //       document.id);
+                                          // }
+                                          // ,
+                                          child:
+                                              CustomProductDetailSmallContainer(
+                                            label: "Fare:",
+                                            title: data['New_fare'] == 0
+                                                ? data['Fare'].toString()
+                                                : "${data['Fare']}+${data['New_fare'] - data['Fare']}",
+                                          ),
                                         ),
-                                      ),
-                                      CustomProductDetailSmallContainer(
-                                        label: "Date:",
-                                        title: data['Date'],
-                                      ),
-                                      CustomProductDetailSmallContainer(
-                                        label: "Event:",
-                                        title: data['Event_Time'],
-                                      ),
-                                    ],
-                                  )
-                                ],
+                                        CustomProductDetailSmallContainer(
+                                          label: "Date:",
+                                          title: data['Date'],
+                                        ),
+                                        CustomProductDetailSmallContainer(
+                                          label: "Event:",
+                                          title: data['Event_Time'],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(

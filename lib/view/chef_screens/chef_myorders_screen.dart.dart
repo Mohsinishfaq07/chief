@@ -10,8 +10,8 @@ import 'package:provider/provider.dart';
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
 import '../../provider/chief_dashboard_provider.dart';
+import '../drawer/chef_drawer.dart';
 import '../user_screens/user_details_screen.dart';
-import 'chef_drawer.dart';
 
 class ChefMyOrderScreen extends StatefulWidget {
   const ChefMyOrderScreen({super.key});

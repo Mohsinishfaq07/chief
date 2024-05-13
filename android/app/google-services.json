@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "690047353342",
-    "project_id": "chief-56bb6",
-    "storage_bucket": "chief-56bb6.appspot.com"
+    "project_number": "840194869259",
+    "project_id": "chief-24f12",
+    "storage_bucket": "chief-24f12.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:690047353342:android:1e7d65cda521fe20f540af",
+        "mobilesdk_app_id": "1:840194869259:android:638051a1ba0a42fa0a1f0e",
         "android_client_info": {
           "package_name": "com.example.chief"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCtXk1afTSFgQC0xSoAUOtvxWMwlcWVIso"
+          "current_key": "AIzaSyBzPSWQoMd5-W3jz58yGpRqqoqSypAUCag"
         }
       ],
       "services": {

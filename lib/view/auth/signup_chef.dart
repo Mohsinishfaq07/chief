@@ -432,24 +432,5 @@ class _SignupChefState extends State<SignupChef> {
     }
   }
 
-// Future<void> _pickImage(ImageSource source, String txt) async {
-  //   String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-  //   final picker = ImagePicker();
-  //   final pickedImage = await picker.pickImage(source: source);
-  //   imagePath = pickedImage!.path;
-  //   final Reference storageReference =
-  //       FirebaseStorage.instance.ref().child('images/$filename');
-  //   UploadTask uploadTask = storageReference.putFile(File(pickedImage.path));
-  //   await uploadTask.whenComplete(() => null);
-  //   String imagepath = await storageReference.getDownloadURL();
-  //   setState(() {
-  //     if (txt == 'certificate') {
-  //       certificateImage = imagePath!;
-  //       userSelectCertificate = true;
-  //     } else if (txt == '') {
-  //       userSelectedImage = true;
-  //       _image = imagepath;
-  //     }
-  //   });
-  // }
+
 }

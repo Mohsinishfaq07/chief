@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
- import 'package:chief/view/user_screens/signup_user.dart';
+ import 'package:chief/view/auth/signup_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +9,7 @@ import '../app_assets.dart';
 import '../global_custom_widgets/custom_app_bar.dart';
 import '../global_custom_widgets/custom_horizontal_line.dart';
 import '../global_custom_widgets/custom_large_button.dart';
-import 'chef_screens/signup_chef.dart';
+import 'auth/signup_chef.dart';
 import 'auth/login_screen.dart';
 
 class GetStartedScreen extends StatefulWidget {

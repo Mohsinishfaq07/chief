@@ -141,32 +141,34 @@ class TimeInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    // First, ensure only digits are allowed
     String numericOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
 
-    // If trying to enter more than 4 digits, keep old value
     if (numericOnly.length > 4) {
-      return oldValue;
+      return oldValue; // If more than 4 digits, revert to old value
     }
 
-    // Insert colon between hour and minute when applicable
     StringBuffer buffer = StringBuffer();
-    for (int i = 0; i < numericOnly.length; i++) {
-      // Append numeric character
-      buffer.write(numericOnly[i]);
-
-      // After the 2nd digit, add a colon (but not at the end)
-      if (i == 1 && numericOnly.length > 2) {
-        buffer.write(':');
+    if (numericOnly.isNotEmpty) {
+      if (numericOnly.length > 2) {
+        // Parse the hour and ensure it doesn't exceed 12
+        int hours = int.parse(numericOnly.substring(0, 2)).clamp(0, 12);
+        buffer.write(hours.toString().padLeft(2, '0')); // Pad only if hours are complete
+        buffer.write(':'); // Add colon after the hour
+        if (numericOnly.length > 2) {
+          // Parse the minute and ensure it doesn't exceed 59
+          int minutes = int.parse(numericOnly.substring(2, numericOnly.length)).clamp(0, 59);
+          buffer.write(minutes.toString().padLeft(2, '0')); // Pad only if minutes are complete
+        }
+      } else {
+        // Allow user to freely type the hour digits
+        buffer.write(numericOnly.substring(0, numericOnly.length));
       }
     }
 
-    // Use the modified string with a colon as the new text value
     String formatted = buffer.toString();
-
-    return TextEditingValue(
+    return newValue.copyWith(
       text: formatted,
-      // Ensure the cursor is at the end of the current text
+      // Adjust the cursor position accordingly
       selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
