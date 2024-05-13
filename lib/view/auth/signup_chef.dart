@@ -61,6 +61,10 @@ class _SignupChefState extends State<SignupChef> {
       bottomNavigationBar: CustomLargeButton(
           title: 'Signup',
           ontap: () {
+            if (!userSelectedImage) {
+              Fluttertoast.showToast(msg: 'Please upload an image to proceed');
+              return;
+            }
             if (nameController.text.isEmpty ||
                 numberController.text.isEmpty ||
                 addressController.text.isEmpty ||
@@ -173,7 +177,7 @@ class _SignupChefState extends State<SignupChef> {
                         hintText: "Enter Number",
                         height: textFieldHeight,
                         width: textFieldWidth,
-                        keyboardType: TextInputType.number, label: 'Enter Number',
+                        keyboardType: TextInputType.phone, label: 'Enter Number',
                       ),
                     ),
                     CustomTextField(

@@ -52,6 +52,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
   void initState() {
     super.initState();
     _obscureText = widget.isPasswordField;
+    if (widget.keyboardType == TextInputType.phone) {
+      widget.controller.text = '03'; // Initialize with '03'
+      widget.controller.selection = TextSelection.fromPosition(TextPosition(offset: widget.controller.text.length));
+    }
   }
 
   @override
@@ -112,7 +116,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ? [DateInputFormatter()]
             : widget.formatTime
                 ? [TimeInputFormatter()]
-                : [],
+                : [ if (widget.keyboardType == TextInputType.phone)
+          _PhoneNumberInputFormatter()],
       ),
     );
   }
@@ -201,5 +206,22 @@ class DateInputFormatter extends TextInputFormatter {
       // Ensure the cursor is positioned correctly, at the end of the current input
       selection: TextSelection.collapsed(offset: formatted.length),
     );
+  }
+}
+class _PhoneNumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    // Ensure the input always starts with '03'
+    if (!newValue.text.startsWith('03')) {
+      return const TextEditingValue(text: '03', selection: TextSelection.collapsed(offset: 2));
+    }
+    // Limit to 11 characters total
+    if (newValue.text.length > 11) {
+      return TextEditingValue(
+        text: newValue.text.substring(0, 11),
+        selection: const TextSelection.collapsed(offset: 11),
+      );
+    }
+    return newValue;
   }
 }
