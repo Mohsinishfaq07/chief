@@ -60,39 +60,115 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
 
   TimeOfDay? selectedArrivalTime;
   String formatTimeOfDay(TimeOfDay tod) {
-    final hour = tod.hour % 12 == 0 ? 12 : tod.hour % 12; // Convert 24-hour time to 12-hour
+    final hour = tod.hour % 12 == 0
+        ? 12
+        : tod.hour % 12; // Convert 24-hour time to 12-hour
     final minute = tod.minute.toString().padLeft(2, '0');
     final period = tod.hour >= 12 ? 'PM' : 'AM';
     return "$hour:$minute $period";
   }
 
-  void _selectTime() async {
-    final TimeOfDay? picked = await showTimePicker(
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialTime: selectedArrivalTime ?? TimeOfDay.now(),
+      initialDate: DateTime.now(), // Current date
+      firstDate: DateTime.now(), // No past dates
+      lastDate: DateTime(2101), // Optional: Future limit
     );
-    if (picked != null && picked != selectedArrivalTime) {
+    if (pickedDate != null && pickedDate != DateTime.now()) {
       setState(() {
-        selectedArrivalTime = picked;
-        arrivelTimeController.text = formatTimeOfDay(picked);
+        dateController.text =
+            pickedDate.toString().split(' ')[0]; // Formatting the date
       });
     }
   }
+
+  void _selectTime() async {
+    if (selectedEventTime == null) {
+      Fluttertoast.showToast(msg: 'Please select the event time first.');
+      return;
+    }
+
+    final DateTime currentDate = DateTime.now();
+    final DateTime? selectedDate = DateTime.tryParse(dateController.text);
+
+    final TimeOfDay currentTime = TimeOfDay.now();
+    final DateTime eventDateTime = DateTime(
+      currentDate.year,
+      currentDate.month,
+      currentDate.day,
+      selectedEventTime!.hour,
+      selectedEventTime!.minute,
+    );
+
+    final DateTime fourHoursBeforeEvent = eventDateTime.subtract(Duration(hours: 4));
+    TimeOfDay initialTime = TimeOfDay(
+      hour: fourHoursBeforeEvent.hour,
+      minute: fourHoursBeforeEvent.minute,
+    );
+
+    if (selectedDate != null && selectedDate.isAtSameMomentAs(currentDate)) {
+      final TimeOfDay oneHourFromNow = TimeOfDay(
+        hour: (currentTime.hour + 1) % 24,
+        minute: currentTime.minute,
+      );
+      initialTime = oneHourFromNow;
+    }
+
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    if (picked != null) {
+      final DateTime pickedDateTime = DateTime(
+        currentDate.year,
+        currentDate.month,
+        currentDate.day,
+        picked.hour,
+        picked.minute,
+      );
+
+      if (pickedDateTime.isAfter(fourHoursBeforeEvent)) {
+        Fluttertoast.showToast(
+            msg: 'Arrival time must be at least 4 hours before the event time.');
+      } else {
+        setState(() {
+          selectedArrivalTime = picked;
+          arrivelTimeController.text = formatTimeOfDay(picked);
+        });
+      }
+    }
+  }
+
   TimeOfDay? selectedEventTime;
 
 // Function to show time picker for event time
   Future<void> _selectEventTime(BuildContext context) async {
+    final DateTime currentDate = DateTime.now();
+    final DateTime? selectedDate = DateTime.tryParse(dateController.text);
+
+    TimeOfDay initialTime = TimeOfDay.now();
+    if (selectedDate != null && selectedDate.isAtSameMomentAs(currentDate)) {
+      initialTime = TimeOfDay(
+        hour: (initialTime.hour + 4) % 24,
+        minute: initialTime.minute,
+      );
+    }
+
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: selectedEventTime ?? TimeOfDay.now(),
+      initialTime: initialTime,
     );
-    if (picked != null && picked != selectedEventTime) {
+
+    if (picked != null) {
       setState(() {
         selectedEventTime = picked;
         eventTimeController.text = formatTimeOfDay(picked);
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -256,27 +332,30 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                             vertical:
                                 MediaQuery.of(context).size.height * 0.01.h),
                         child: CustomTextField(
-                          formatDate: true,
+                          onPressedSuffix: () => _selectDate(context),
+                          readOnly: true,
                           label: "Date",
-                          keyboardType: TextInputType.datetime,
                           controller: dateController,
                           hintText: "Date",
+                          formatTime: true,
+                          suffix: Icons.calendar_month,
                         ),
                       ),
                       CustomTextField(
-                        onPressedSuffix: _selectTime,
+                        onPressedSuffix:
+                            selectedEventTime == null ? null : _selectTime,
                         readOnly: true,
-                        keyboardType: TextInputType.number,
                         formatTime: true,
                         label: "Arrival Time ",
                         controller: arrivelTimeController,
-                        hintText: "Arrival Time ",suffix: Icons.lock_clock,
+                        hintText: "Arrival Time ",
+                        suffix: Icons.lock_clock,
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical:
                                 MediaQuery.of(context).size.height * 0.01.h),
-                        child:CustomTextField(
+                        child: CustomTextField(
                           label: "Event Time",
                           controller: eventTimeController,
                           hintText: "Select Event Time",

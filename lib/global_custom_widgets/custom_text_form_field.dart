@@ -54,7 +54,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
     _obscureText = widget.isPasswordField;
     if (widget.keyboardType == TextInputType.phone) {
       widget.controller.text = '03'; // Initialize with '03'
-      widget.controller.selection = TextSelection.fromPosition(TextPosition(offset: widget.controller.text.length));
+      widget.controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: widget.controller.text.length));
     }
   }
 
@@ -68,60 +69,93 @@ class _CustomTextFieldState extends State<CustomTextField> {
       width: defaultWidth,
       height: defaultHeight,
       child: TextFormField(
-        readOnly: widget.readOnly,
-        textAlign: TextAlign.start,
-        maxLength: widget.maxLength,
-        maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        controller: widget.controller,
-        obscureText: _obscureText,
-        keyboardType: widget.keyboardType,
-        textInputAction: widget.textInputAction,
-        decoration: InputDecoration(
-          label: widget.label != null ? Text(widget.label!) : null,
-          floatingLabelBehavior: FloatingLabelBehavior.auto,
-          hintText: widget.hintText,
-          hintStyle: TextStyle(color: Colors.transparent, fontSize: 14.sp),
-          labelStyle:TextStyle(color: Colors.black, fontSize: 14.sp),
-          prefixIcon: widget.prefix,
-          suffixIcon: _buildSuffixIcon(),
-          contentPadding: EdgeInsets.symmetric(
-              vertical: defaultHeight * 0.1, horizontal: 20.w),
-          fillColor: Colors.white,
-          filled: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(9.h),
-            borderSide: const BorderSide(
-              color: Colors.transparent, // Adjust the border color as needed
-              width: 1.0, // Adjust the border width as needed
+          readOnly: widget.readOnly,
+          textAlign: TextAlign.start,
+          maxLength: widget.maxLength,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+          controller: widget.controller,
+          obscureText: _obscureText,
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          decoration: InputDecoration(
+            label: widget.label != null ? Text(widget.label!) : null,
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            hintText: widget.hintText,
+            hintStyle: TextStyle(color: Colors.transparent, fontSize: 14.sp),
+            labelStyle: TextStyle(color: Colors.black, fontSize: 14.sp),
+            prefixIcon: widget.prefix,
+            suffixIcon: _buildSuffixIcon(),
+            contentPadding: EdgeInsets.symmetric(
+                vertical: defaultHeight * 0.1, horizontal: 20.w),
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(9.h),
+              borderSide: const BorderSide(
+                color: Colors.transparent, // Adjust the border color as needed
+                width: 1.0, // Adjust the border width as needed
+              ),
             ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(9.h),
-            borderSide: const BorderSide(
-              color:
-              Colors.transparent, // Adjust the color for the normal state
-              width: 1.0, // Adjust the width as needed
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(9.h),
+              borderSide: const BorderSide(
+                color:
+                    Colors.transparent, // Adjust the color for the normal state
+                width: 1.0, // Adjust the width as needed
+              ),
             ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(9.h),
-            borderSide: const BorderSide(
-              color: Colors.transparent, // Adjust the color for the focused state
-              width: 1.0, // Adjust the width as needed
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(9.h),
+              borderSide: const BorderSide(
+                color: Colors
+                    .transparent, // Adjust the color for the focused state
+                width: 1.0, // Adjust the width as needed
+              ),
             ),
+            counterText: '',
           ),
-          counterText: '',
-        ),
-        inputFormatters: widget.formatDate
-            ? [DateInputFormatter()]
-            : widget.formatTime
-                ? [TimeInputFormatter()]
-                : [ if (widget.keyboardType == TextInputType.phone)
-          _PhoneNumberInputFormatter()],
-      ),
+
+          inputFormatters: widget.formatDate
+              ? [DateInputFormatter()]
+              : widget.formatTime
+                  ? [TimeInputFormatter()]
+                  : [
+                      if (widget.keyboardType == TextInputType.phone)
+                        _PhoneNumberInputFormatter()
+                    ],
+          validator: widget.formatDate ? _validateDate : null,
+
+    )
     );
   }
 
+  String? _validateDate(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter a date';
+
+    try {
+      // Using RegExp to check for a basic date format (dd/mm/yyyy)
+      if (!RegExp(r'\d{2}/\d{2}/\d{4}').hasMatch(value)) {
+        return 'Invalid date format. Use DD/MM/YYYY';
+      }
+
+      // Parsing the date from DD/MM/YYYY format
+      List<String> parts = value.split('/');
+      DateTime inputDate = DateTime(
+        int.parse(parts[2]),
+        int.parse(parts[1]),
+        int.parse(parts[0]),
+      );
+
+      if (inputDate.isBefore(DateTime.now())) {
+        return 'Please enter a current or future date';
+      }
+    } catch (e) {
+      // This catches any parsing errors
+      return 'Invalid date format or incorrect date';
+    }
+
+    return null;
+  }
   Widget? _buildSuffixIcon() {
     if (widget.isPasswordField) {
       return IconButton(
@@ -140,6 +174,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     }
     return null;
   }
+
 }
 
 class TimeInputFormatter extends TextInputFormatter {
@@ -157,12 +192,16 @@ class TimeInputFormatter extends TextInputFormatter {
       if (numericOnly.length > 2) {
         // Parse the hour and ensure it doesn't exceed 12
         int hours = int.parse(numericOnly.substring(0, 2)).clamp(0, 12);
-        buffer.write(hours.toString().padLeft(2, '0')); // Pad only if hours are complete
+        buffer.write(
+            hours.toString().padLeft(2, '0')); // Pad only if hours are complete
         buffer.write(':'); // Add colon after the hour
         if (numericOnly.length > 2) {
           // Parse the minute and ensure it doesn't exceed 59
-          int minutes = int.parse(numericOnly.substring(2, numericOnly.length)).clamp(0, 59);
-          buffer.write(minutes.toString().padLeft(2, '0')); // Pad only if minutes are complete
+          int minutes = int.parse(numericOnly.substring(2, numericOnly.length))
+              .clamp(0, 59);
+          buffer.write(minutes
+              .toString()
+              .padLeft(2, '0')); // Pad only if minutes are complete
         }
       } else {
         // Allow user to freely type the hour digits
@@ -208,12 +247,15 @@ class DateInputFormatter extends TextInputFormatter {
     );
   }
 }
+
 class _PhoneNumberInputFormatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     // Ensure the input always starts with '03'
     if (!newValue.text.startsWith('03')) {
-      return const TextEditingValue(text: '03', selection: TextSelection.collapsed(offset: 2));
+      return const TextEditingValue(
+          text: '03', selection: TextSelection.collapsed(offset: 2));
     }
     // Limit to 11 characters total
     if (newValue.text.length > 11) {
