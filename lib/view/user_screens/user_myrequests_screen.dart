@@ -55,9 +55,8 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
                 },
               );
             } else {
-              return Center(
-                  child: Text('No requests found.',
-                      style: Theme.of(context).textTheme.headline6));
+              return const Center(
+                  child: Text('No requests found.')) ;
             }
           },
         ),
