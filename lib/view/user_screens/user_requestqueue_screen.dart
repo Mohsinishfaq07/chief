@@ -32,7 +32,7 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
           title: const Text('Request Queue ',
               style: TextStyle(fontWeight: FontWeight.bold)),
           centerTitle: true,
-          backgroundColor: Colors.pink.shade200),
+          backgroundColor: Colors.deepOrange.shade200),
       drawer: const UserDrawer(),
       body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -122,7 +122,7 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                     ),
                                     GestureDetector(
                                       onTap: () async {
-                                        database.addacceptedRequest(
+                                        database.addAcceptedRequest(
                                           context,
                                           data['userid'],
                                           data['shiefid'],
@@ -149,17 +149,20 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                             .delete();
                                       },
                                       child: Container(
+                                          height: MediaQuery.of(context).size.height * 0.06.h,
+                                          width:  MediaQuery.of(context).size.width * 0.26.w,
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            color: Colors.pink.shade200,
+
+                                            color: Colors.deepOrange.shade200,
                                           ),
                                           child: const Padding(
                                             padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Accept",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
+                                            child: Center(
+                                              child: Text(
+                                                "Accept",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold),
+                                              ),
                                             ),
                                           )),
                                     ),
@@ -175,27 +178,39 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Date: $day/$month/$year'),
-                                  GestureDetector(
-                                    onTap: () {
+                                   CustomProductDetailSmallContainer(
+                                    label: "Chef Details",
+                                    onTap: (){
                                       Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ChefDetailsScreen(
-                                                      userid:
-                                                          data['shiefid'])));
-                                    },
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              22,
-                                      width:
-                                          MediaQuery.of(context).size.width / 4,
-                                      decoration: BoxDecoration(
-                                          color: Colors.pink.shade200),
-                                      child: const Center(
-                                          child: Text("ChiefDetails")),
-                                    ),
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ChefDetailsScreen(
+                                                              userid:
+                                                                  data['shiefid'])));
+                                    }
+                                    // title: data['shiefid'],
                                   ),
+                                  // GestureDetector(
+                                  //   onTap: () {
+                                  //     Navigator.of(context).push(
+                                  //         MaterialPageRoute(
+                                  //             builder: (context) =>
+                                  //                 ChefDetailsScreen(
+                                  //                     userid:
+                                  //                         data['shiefid'])));
+                                  //   },
+                                  //   child: Container(
+                                  //     height:
+                                  //         MediaQuery.of(context).size.height /
+                                  //             22,
+                                  //     width:
+                                  //         MediaQuery.of(context).size.width / 4,
+                                  //     decoration: BoxDecoration(
+                                  //         color: Colors.pink.shade200),
+                                  //     child: const Center(
+                                  //         child: Text("ChiefDetails")),
+                                  //   ),
+                                  // ),
                                   Text('Time: $hour:$minute')
                                 ],
                               ),

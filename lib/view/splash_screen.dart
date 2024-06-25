@@ -12,14 +12,33 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..forward();
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
     Future.delayed(const Duration(seconds: 4), () {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const GetStartedScreen()));
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -28,8 +47,14 @@ class _SplashScreenState extends State<SplashScreen> {
       appBar: const CustomAppBarWidget(),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(12.h),
-          child: Image.asset(AppAssets.imgCookingBro),
+          padding: EdgeInsets.all(16.h),
+          child: FadeTransition(
+            opacity: _animation,
+            child: ScaleTransition(
+              scale: _animation,
+              child: Image.asset(AppAssets.imgCookingBro),
+            ),
+          ),
         ),
       ),
     );

@@ -1,12 +1,15 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
- import 'package:chief/view/auth/login_screen.dart';
+ import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:chief/view/auth/login_screen.dart';
 import 'package:chief/view/dashboard/User_dashboard_request_form.dart';
 import 'package:chief/view/get_started_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../view/dashboard/chef_dashboard_screen.dart';
@@ -21,7 +24,7 @@ class AppDatabase {
       barrierDismissible: false,
       builder: (context) => const Center(
         child: CircularProgressIndicator(
-          color: Colors.pink,
+          color: Colors.orange,
         ),
       ),
     );
@@ -58,7 +61,7 @@ class AppDatabase {
       barrierDismissible: false,
       builder: (context) => const Center(
         child: CircularProgressIndicator(
-          color: Colors.pink,
+          color: Colors.orange,
         ),
       ),
     );
@@ -123,7 +126,7 @@ class AppDatabase {
     }
   }
 
-  void chiefDetailsToFirestore(
+  Future<void> chefDetailToFireStore(
       BuildContext context,
       String name,
       String number,
@@ -136,7 +139,7 @@ class AppDatabase {
       String image,
       String certificateimage,
      int rating
-      ) {
+      ) async {
     var user = _auth.currentUser;
     CollectionReference ref =
         FirebaseFirestore.instance.collection('chief_users');
@@ -156,9 +159,9 @@ class AppDatabase {
       'role': 'chief',
       'timestamp': FieldValue.serverTimestamp()
     });
-    CollectionReference allusersref =
+    CollectionReference allUsersRef =
         FirebaseFirestore.instance.collection('allusers');
-    allusersref.doc(user.uid).set({
+    allUsersRef.doc(user.uid).set({
       'id': user.uid,
       'Name': name,
       'Email': email,
@@ -173,6 +176,97 @@ class AppDatabase {
       (Route<dynamic> route) => false,
     );
   }
+  // Future<void> chefDetailToFireStore(
+  //     BuildContext context,
+  //     String name,
+  //     String number,
+  //     String address,
+  //     String email,
+  //     String pass,
+  //     String experience,
+  //     String speciality,
+  //     String certificate,
+  //     String image,
+  //     String certificateimage,
+  //     int rating,
+  //     ) async {
+  //   var user = _auth.currentUser;
+  //   CollectionReference ref = FirebaseFirestore.instance.collection('chief_users');
+  //
+  //   try {
+  //     // Check if the email is verified
+  //     if (!user!.emailVerified) {
+  //       // Prompt the chef to verify the email
+  //       Fluttertoast.showToast(msg: "Please verify your email before creating your account.");
+  //       await user.sendEmailVerification(); // Send verification email
+  //
+  //       // Show countdown dialog with option to check verification
+  //       bool isEmailVerified = await showDialog(
+  //         context: context,
+  //         barrierDismissible: false,
+  //         builder: (context) {
+  //           return EmailVerificationDialog(user: user);
+  //         },
+  //       ) ?? false; // If dialog is dismissed, default to false
+  //
+  //       // Final check after countdown or "Check Now"
+  //       if (!isEmailVerified) {
+  //         Fluttertoast.showToast(msg: "Email verification not completed. Sign-up process stopped.");
+  //         return; // Stop the sign-up process if email is not verified
+  //       }
+  //     }
+  //
+  //     // Check if the user already exists in Firestore
+  //     DocumentSnapshot existingUser = await ref.doc(user.uid).get();
+  //     if (existingUser.exists) {
+  //       Fluttertoast.showToast(msg: "Account already exists. Please log in.");
+  //       return; // Exit the function if the user already exists
+  //     }
+  //
+  //     // Email is verified and no existing user, proceed with creating account in Firestore
+  //     await ref.doc(user.uid).set({
+  //       'id': user.uid,
+  //       'Name': name,
+  //       'Number': number,
+  //       'Address': address,
+  //       'Email': email,
+  //       'Password': pass,
+  //       'Work Experience': experience,
+  //       'Specialities': speciality,
+  //       'Certifications': certificate,
+  //       'Certificate image': certificateimage,
+  //       'image': image,
+  //       'Rating': rating.toString(),
+  //       'role': 'chief',
+  //       'timestamp': FieldValue.serverTimestamp()
+  //     });
+  //
+  //     CollectionReference allUsersRef = FirebaseFirestore.instance.collection('allusers');
+  //     await allUsersRef.doc(user.uid).set({
+  //       'id': user.uid,
+  //       'Name': name,
+  //       'Email': email,
+  //       'role': 'chief',
+  //       'timestamp': FieldValue.serverTimestamp()
+  //     });
+  //
+  //     // Inform user that account creation was successful
+  //     Fluttertoast.showToast(msg: "Account Created");
+  //
+  //     // Navigate to GetStartedScreen
+  //     Navigator.of(context).popUntil((route) => route.isFirst);
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => const GetStartedScreen()),
+  //           (Route<dynamic> route) => false,
+  //     );
+  //
+  //   } catch (e) {
+  //     // Handle errors related to Firebase operations or other exceptions
+  //     print('Error creating chef account: $e');
+  //     Fluttertoast.showToast(msg: 'An error occurred. Please try again later.');
+  //   }
+  // }
 
   void userDetailsToFireStore(BuildContext context, String name, String number,
       String address, String email, String pass, String imagepath) {
@@ -307,7 +401,7 @@ class AppDatabase {
     }
   }
 
-   Future<void> addacceptedRequest(
+   Future<void> addAcceptedRequest(
       BuildContext context,
       String userid,
       String shiefid,
@@ -348,7 +442,7 @@ class AppDatabase {
 
 
 
-  Future<void> addShiefrRequest(
+  Future<void> addChefRequest(
       BuildContext context,
       String documentId,
       String userid,
@@ -517,4 +611,80 @@ class AppDatabase {
     }
   }
 
+}
+
+class EmailVerificationDialog extends StatefulWidget {
+  final User user;
+
+  EmailVerificationDialog({required this.user});
+
+  @override
+  _EmailVerificationDialogState createState() => _EmailVerificationDialogState();
+}
+
+class _EmailVerificationDialogState extends State<EmailVerificationDialog> {
+  int _secondsRemaining = 30;
+  Timer? _timer;
+  bool _isEmailVerified = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startCountdown();
+  }
+
+  void _startCountdown() {
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) async {
+      setState(() {
+        _secondsRemaining--;
+      });
+
+      if (_secondsRemaining == 0) {
+        _timer?.cancel();
+        await _checkEmailVerification();
+      }
+    });
+  }
+
+  Future<void> _checkEmailVerification() async {
+    await widget.user.reload(); // Reload the user's data to get the latest status
+    setState(() {
+      _isEmailVerified = widget.user.emailVerified;
+    });
+
+    if (_isEmailVerified) {
+      Navigator.of(context).pop(true); // Close dialog and return true if email is verified
+    } else {
+      Fluttertoast.showToast(msg: "Email not verified yet. Please check your email.");
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Verify Your Email"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("You need to verify your email to complete the sign-up process."),
+          SizedBox(height: 10),
+          Text("Returning in $_secondsRemaining seconds..."),
+          SizedBox(height: 10),
+          CircularProgressIndicator(),
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: Text("Check Now"),
+          onPressed: _checkEmailVerification,
+        ),
+      ],
+    );
+  }
 }

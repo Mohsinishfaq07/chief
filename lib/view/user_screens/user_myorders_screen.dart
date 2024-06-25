@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use, must_be_immutable, use_build_context_synchronously
 
 import 'package:chief/view/chef_screens/chef_details_screen.dart';
- import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,7 +30,7 @@ class UserMyOrdersScreen extends StatelessWidget {
           title: const Text('My Orders',
               style: TextStyle(fontWeight: FontWeight.bold)),
           centerTitle: true,
-          backgroundColor: Colors.pink.shade200),
+          backgroundColor: Colors.deepOrange.shade200),
       drawer: const UserDrawer(),
       body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w),
@@ -53,9 +53,17 @@ class UserMyOrdersScreen extends StatelessWidget {
                       DocumentSnapshot document = snapshot.data!.docs[index];
                       Map<String, dynamic>? data =
                           document.data() as Map<String, dynamic>;
-                      Timestamp timestamp = data['timestamp'];
+                      Timestamp? timestamp = data['timestamp'];
                       // Convert Firestore Timestamp to DateTime
-                      DateTime dateTime = timestamp.toDate();
+                      DateTime dateTime;
+                      if (timestamp != null) {
+                        // Convert Firestore Timestamp to DateTime
+                        dateTime = timestamp.toDate();
+                      } else {
+                        // Handle the case where timestamp is null
+                        dateTime =
+                            DateTime.now(); // or any default DateTime value
+                      }
                       // Extract date and time components
                       int year = dateTime.year;
                       int month = dateTime.month;
@@ -75,6 +83,31 @@ class UserMyOrdersScreen extends StatelessWidget {
                                   Column(
                                     children: [
                                       UserInfoSection(image: data['image']),
+                                      Container(
+                                        height: MediaQuery.of(
+                                            context)
+                                            .size
+                                            .height *
+                                            0.011.h,
+
+                                      ),
+                                      SizedBox(height: 22.h,),
+                                        CustomProductDetailSmallContainer(
+
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ChefDetailsScreen(
+                                                        userid: data['shiefid']),
+                                              ),
+                                            );
+                                          },
+                                          label: "Chef Details",
+
+                                        ),
+
                                     ],
                                   ),
                                   Column(
@@ -133,19 +166,28 @@ class UserMyOrdersScreen extends StatelessWidget {
                                     height: MediaQuery.of(context).size.height *
                                         0.1,
                                     width:
-                                        MediaQuery.of(context).size.width * 0.8,
+                                        MediaQuery.of(context).size.width * 0.86.w,
                                     decoration: BoxDecoration(
-                                        color: Colors.pink.shade200),
-                                    child: Center(
-                                        child: Text(
-                                            data['Availabe_Ingredients']))),
+                                        color: Colors.deepOrange.shade200),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                          child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            const Text("Available Ingredients",style: TextStyle(fontWeight: FontWeight.bold),),
+                                            Text(data['Availabe_Ingredients']),
+                                          ],
+                                        ),
+                                      )),
+                                    )),
                               ),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceAround,
                                 children: <Widget>[
                                   Container(
-                                    color: Colors.pinkAccent.shade100,
+                                    color: Colors.deepOrange.shade200,
                                     child: IconButton(
                                       icon: const Icon(Icons.close,
                                           color: Colors.black),
@@ -171,29 +213,8 @@ class UserMyOrdersScreen extends StatelessWidget {
                                       },
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              ChefDetailsScreen(
-                                                  userid: data['shiefid']),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: 100,
-                                      height: 40,
-                                      color: Colors.pink.shade200,
-                                      child: const Center(
-                                          child: Text(
-                                        'chief details',
-                                      )),
-                                    ),
-                                  ),
                                   Container(
-                                    color: Colors.pink.shade200,
+                                    color: Colors.deepOrange.shade200,
                                     child: // In ChefPendingRequestsState class
                                         IconButton(
                                       icon: const Icon(Icons.check,

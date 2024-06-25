@@ -21,7 +21,7 @@ class CustomSmallButton extends StatelessWidget {
           border: Border.all(color: Colors.white),
           borderRadius: BorderRadius.circular(10.r),
         ),
-        height: MediaQuery.of(context).size.height * 0.03.h,
+        height: MediaQuery.of(context).size.height * 0.04.h,
         width: MediaQuery.of(context).size.width * 0.18.w,
         child: Center(
           child: Text(
@@ -29,7 +29,7 @@ class CustomSmallButton extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.w800,
                 color: Colors.black,
-                fontSize: 12.sp),
+                fontSize: 14.sp),
           ),
         ),
       ),

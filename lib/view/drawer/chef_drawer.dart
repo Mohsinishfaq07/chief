@@ -18,7 +18,7 @@ class ChefDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.pink.shade200,
+      backgroundColor: Colors.deepOrange.shade200,
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[

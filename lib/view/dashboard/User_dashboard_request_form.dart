@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import '../../global_custom_widgets/custom_horizontal_line.dart';
 import '../../global_custom_widgets/custom_large_button.dart';
 import '../../global_custom_widgets/custom_size.dart';
@@ -101,7 +100,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
       selectedEventTime!.minute,
     );
 
-    final DateTime fourHoursBeforeEvent = eventDateTime.subtract(Duration(hours: 4));
+    final DateTime fourHoursBeforeEvent = eventDateTime.subtract(const Duration(hours: 1));
     TimeOfDay initialTime = TimeOfDay(
       hour: fourHoursBeforeEvent.hour,
       minute: fourHoursBeforeEvent.minute,
@@ -220,7 +219,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
         child: Scaffold(
           key: _scaffoldKey,
           drawer: const UserDrawer(),
-          appBar: AppBar(backgroundColor: Colors.pink.shade200),
+          appBar: AppBar(backgroundColor: Colors.deepOrange.shade200,),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(8.0),
             child: CustomLargeButton(

@@ -52,7 +52,7 @@ class RequestCard extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator(
-              color: Colors.pink,
+              color: Colors.orange,
             ); // Show a loading indicator while fetching data
           }
           if (snapshot.hasError) {
@@ -83,12 +83,19 @@ class RequestCard extends StatelessWidget {
                         label: "Number",
                         title: userData['Number'],
                       ),
-                      CustomProductDetailSmallContainer(
-                        label: "Email",
-                        title: userData['Email'],
-                      ),
+
                     ],
                   ),
+                  Column(children: [
+                    CustomProductDetailSmallContainer(
+                      label: "Email",
+                      title: userData['Email'],
+                    ),
+                    CustomProductDetailSmallContainer(
+                      label: "Role",
+                      title: userData['role'],
+                    ),
+                  ],)
                 ],
               ),
             ),

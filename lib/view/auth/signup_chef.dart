@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:chief/global_custom_widgets/custom_text_form_field.dart';
 import 'package:chief/model/app_database.dart';
+import 'package:chief/view/auth/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -164,7 +165,7 @@ class _SignupChefState extends State<SignupChef> {
                       ],
                     ),
                     CustomTextField(
-                      label: "Your Name",
+                        label: "Your Name",
                         controller: nameController,
                         hintText: "Enter name",
                         height: textFieldHeight,
@@ -177,11 +178,12 @@ class _SignupChefState extends State<SignupChef> {
                         hintText: "Enter Number",
                         height: textFieldHeight,
                         width: textFieldWidth,
-                        keyboardType: TextInputType.phone, label: 'Enter Number',
+                        keyboardType: TextInputType.phone,
+                        label: 'Enter Number',
                       ),
                     ),
                     CustomTextField(
-                      label:"Enter Your Location",
+                        label: "Enter Your Location",
                         controller: addressController,
                         hintText: "Enter Your Location",
                         height: textFieldHeight,
@@ -189,21 +191,24 @@ class _SignupChefState extends State<SignupChef> {
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: paddingHeight),
                       child: CustomTextField(
-                        label:"Enter Gmail" ,
+                          label: "Enter Gmail",
                           controller: gmailController,
                           hintText: "Enter Gmail",
                           height: textFieldHeight,
                           width: textFieldWidth),
                     ),
-                    CustomTextField(label:"Enter Password",
+                    CustomTextField(
+                        label: "Enter Password",
                         controller: passwordController,
                         hintText: "Enter Password",
                         isPasswordField: true,
+                        textInputAction: TextInputAction.next,
                         height: textFieldHeight,
                         width: textFieldWidth),
                     Padding(
                       padding: EdgeInsets.only(top: paddingHeight),
-                      child: CustomTextField(label:"Confirm Password",
+                      child: CustomTextField(
+                          label: "Confirm Password",
                           controller: confirmPasswordController,
                           hintText: "Confirm Password",
                           isPasswordField: true,
@@ -214,14 +219,16 @@ class _SignupChefState extends State<SignupChef> {
                       padding: EdgeInsets.symmetric(
                           vertical:
                               MediaQuery.of(context).size.height * 0.02.h),
-                      child: CustomTextField(label:"Enter Work Experience",
+                      child: CustomTextField(
+                          label: "Enter Work Experience",
                           keyboardType: TextInputType.number,
                           controller: experienceController,
                           hintText: "Enter Work Experience",
                           height: textFieldHeight,
                           width: textFieldWidth),
                     ),
-                    CustomTextField(label: "Enter Specialities",
+                    CustomTextField(
+                        label: "Enter Specialities",
                         controller: specialityController,
                         hintText: "Enter Specialities",
                         height: textFieldHeight,
@@ -327,44 +334,44 @@ class _SignupChefState extends State<SignupChef> {
   }
 
   onTapSignupUser(
-    BuildContext context,
-    String name,
-    String number,
-    String address,
-    String email,
-    String pass,
-    String experience,
-    String speciality,
-    String certificate,
-    String certificateImage,
-  ) async {
+      BuildContext context,
+      String name,
+      String number,
+      String address,
+      String email,
+      String pass,
+      String experience,
+      String speciality,
+      String certificate,
+      String certificateImage,
+      ) async {
     FocusScope.of(context).unfocus();
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(
-              child: CircularProgressIndicator(
-                color: Colors.pink,
-              ),
-            ));
+          child: CircularProgressIndicator(
+            color: Colors.pink,
+          ),
+        ));
     try {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((uid) => {
-                database.chiefDetailsToFirestore(
-                    context,
-                    name,
-                    number,
-                    address,
-                    email,
-                    pass,
-                    experience,
-                    speciality,
-                    certificate,
-                    _image,
-                    certificateImage,
-                    0),
-              });
+        database.chefDetailToFireStore(
+            context,
+            name,
+            number,
+            address,
+            email,
+            pass,
+            experience,
+            speciality,
+            certificate,
+            _image,
+            certificateImage,
+            0),
+      });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
       Navigator.of(context).pop(); // Dismiss the loading dialog
@@ -376,7 +383,7 @@ class _SignupChefState extends State<SignupChef> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-            color: Colors.pink[200],
+            color: Colors.deepOrange.shade200,
             height: 120,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -435,6 +442,4 @@ class _SignupChefState extends State<SignupChef> {
       });
     }
   }
-
-
 }

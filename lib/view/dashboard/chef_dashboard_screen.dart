@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
@@ -97,7 +98,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
     }
 
     // Assume addShiefrRequest handles the database operation and takes necessary parameters
-    database.addShiefrRequest(
+    database.addChefRequest(
         context,
         documentId,
         data['userid'],
@@ -136,7 +137,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
             final shouldPop = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
-                backgroundColor: Colors.pinkAccent,
+                backgroundColor: Colors.deepOrange.shade200,
                 title: const Text(
                   'Exit App',
                   style: TextStyle(
@@ -172,12 +173,13 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
           }
         },
         child: Scaffold(
+            backgroundColor: Colors.deepOrange.shade200,
             drawer: const ChefDrawer(),
             appBar: AppBar(
                 title: const Text('All Requests',
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 centerTitle: true,
-                backgroundColor: Colors.pink.shade200),
+                backgroundColor: Colors.deepOrange.shade200),
             body: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('chief_users')
@@ -221,8 +223,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                 String noofpeople =
                                     data['No_of_people'] ?? 'No fare';
                                 String availableIngredients =
-                                    data[
-                                    'Availabe_Ingredients'] ?? '';
+                                    data['Availabe_Ingredients'] ?? '';
 
                                 // Check if the request should be visible
                                 if (!visibleRequests.containsKey(documentId)) {
@@ -242,162 +243,225 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                 int day = dateTime.day;
                                 int hour = dateTime.hour;
                                 int minute = dateTime.minute;
-                                return Card(
-                                  elevation: 4,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(6),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                UserInfoSection(
-                                                    image: data['image'] ?? ""),
-                                              ],
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                CustomProductDetailSmallContainer(
-                                                    label: "Item",
-                                                    title: itemName),
-                                                CustomProductDetailSmallContainer(
-                                                    label: "People",
-                                                    title: noofpeople),
-                                                CustomProductDetailSmallContainer(
-                                                    label: "Arrival",
-                                                    title: arrivalTime),
-                                              ],
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    _showFareUpdateDialog(
-                                                        document.id);
-                                                  },
-                                                  child:
-                                                      CustomProductDetailSmallContainer(
-                                                    label: "Fare",
-                                                    title: fare,
-                                                  ),
-                                                ),
-                                                CustomProductDetailSmallContainer(
-                                                  label: "Date",
-                                                  title: data['Date'],
-                                                ),
-                                                CustomProductDetailSmallContainer(
-                                                  label: "Event ",
-                                                  title: eventTime,
-                                                ),
-                                              ],
-                                            )
-                                          ],
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
+                                          color: Colors.white,
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.006),
-                                          child: Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.1,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  color: Colors.pink.shade200),
-                                              child: Center(
-                                                  child: Column(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(6),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
                                                 children: [
-                                                  const Text(
-                                                    "Available Ingredients :",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                  Column(
+                                                    children: [
+                                                      UserInfoSection(
+                                                          image:
+                                                              data['image'] ??
+                                                                  ""),
+                                                      // Text(data['Name']),
+                                                      Container(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.011.h,
+
+                                                      ),
+                                                      SizedBox(height: 22.h,),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  UserDetails(
+                                                                      userid: data[
+                                                                          'userid']),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              0.06.h,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.26.w,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal: 2,
+                                                                  vertical: 2),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .deepOrange
+                                                                .shade200,
+                                                             borderRadius: BorderRadius.circular(10),
+                                                          ),
+                                                          child: const Center(
+                                                              child: Text(
+                                                            'User Details',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          )),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Flexible(
-                                                    child: Text( availableIngredients),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      CustomProductDetailSmallContainer(
+                                                          label: "Item",
+                                                          title: itemName),
+                                                      CustomProductDetailSmallContainer(
+                                                          label: "People",
+                                                          title: noofpeople),
+                                                      CustomProductDetailSmallContainer(
+                                                          label: "Arrival",
+                                                          title: arrivalTime),
+                                                    ],
                                                   ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          _showFareUpdateDialog(
+                                                              document.id);
+                                                        },
+                                                        child:
+                                                            CustomProductDetailSmallContainer(
+                                                          label: "Fare",
+                                                          title: fare,
+                                                        ),
+                                                      ),
+                                                      CustomProductDetailSmallContainer(
+                                                        label: "Date",
+                                                        title: data['Date'],
+                                                      ),
+                                                      CustomProductDetailSmallContainer(
+                                                        label: "Event ",
+                                                        title: eventTime,
+                                                      ),
+                                                    ],
+                                                  )
                                                 ],
-                                              ))),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: <Widget>[
-                                            Container(
-                                              color: Colors.pinkAccent.shade100,
-                                              child: IconButton(
-                                                icon: const Icon(Icons.close,
-                                                    color: Colors.black),
-                                                onPressed: () async {
-                                                  _hideRequestTemporarily(
-                                                      documentId);
-                                                },
                                               ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        UserDetails(
-                                                            userid:
-                                                                data['userid']),
-                                                  ),
-                                                );
-                                              },
-                                              child: Container(
-                                                width: 100,
-                                                height: 40,
-                                                color: Colors.pink.shade200,
-                                                child: const Center(
-                                                    child: Text(
-                                                  'user details',
-                                                )),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.006),
+                                                child: Container(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.1,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.9,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                           BorderRadius.circular(10),
+                                                      color: Colors
+                                                          .deepOrange.shade200,
+                                                    ),
+                                                    child: Center(
+                                                        child: SingleChildScrollView(
+                                                          child: Column(
+                                                                                                                mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                                                                                children: [
+                                                          const Text(
+                                                            "Available Ingredients ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Text(
+                                                              availableIngredients),
+                                                                                                                ],
+                                                                                                              ),
+                                                        ))),
                                               ),
-                                            ),
-                                            Container(
-                                              color: Colors.pink.shade200,
-                                              child: // In ChefPendingRequestsState class
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: <Widget>[
                                                   IconButton(
-                                                icon: const Icon(Icons.check,
+                                                    icon:   const Icon(
+                                                        Icons.close,
+                                                        color: Colors.black,
+                                                      applyTextScaling: true,
+                                                     ),
+                                                    onPressed: () async {
+                                                      _hideRequestTemporarily(
+                                                          documentId);
+                                                    },
+                                                  ),
+                                                  IconButton(
+                                                                                                        icon: const Icon(
+                                                    Icons.check,
                                                     color: Colors.black),
-                                                onPressed: () => _handleRequest(
-                                                    documentId, data),
+                                                                                                        onPressed: () =>
+                                                    _handleRequest(
+                                                        documentId, data),
+                                                                                                      ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 8, left: 5, right: 5),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text('Date: $day/$month/$year'),
-                                              Text('Time: $hour:$minute')
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 8, left: 5, right: 5),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                        'Date: $day/$month/$year'),
+                                                    Text('Time: $hour:$minute')
+                                                  ],
+                                                ),
+                                              )
                                             ],
                                           ),
-                                        )
-                                      ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
                                 );
                               },
                             );

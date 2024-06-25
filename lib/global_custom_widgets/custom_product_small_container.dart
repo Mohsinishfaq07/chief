@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomProductDetailSmallContainer extends StatelessWidget {
-  final String title;
+  final String? title;
   final String? label;
+  final VoidCallback? onTap;
 
   const CustomProductDetailSmallContainer({
     super.key,
-    required this.title,
+    this.onTap,
+     this.title,
     this.label,
   });
 
@@ -23,29 +25,35 @@ class CustomProductDetailSmallContainer extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         vertical: MediaQuery.of(context).size.height * 0.006.h,
       ),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.038.h,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.pink.shade200,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (label != null)
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+        //        height: MediaQuery.of(context).size.height * 0.038.h,
+          height: MediaQuery.of(context).size.height * 0.06.h,
+          width:  MediaQuery.of(context).size.width * 0.26.w,
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+          decoration:  BoxDecoration(
+            color: Colors.deepOrange.shade200,
+             borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (label != null)
+                Text(
+                  label!,
+                  style:   TextStyle(fontWeight: FontWeight.bold, color: Colors.black,fontSize: 11.sp),
+                ),
+              const SizedBox(width: 2),
+              if (title != null)// Provides spacing between label and title
               Text(
-                label!,
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                limitWords(title!, 8),
+                overflow: TextOverflow.ellipsis,
+                style:  TextStyle(color: Colors.black,fontSize: 11.sp),
               ),
-            const SizedBox(width: 2),  // Provides spacing between label and title
-            Text(
-              limitWords(title, 8),
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.black),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

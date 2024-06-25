@@ -29,7 +29,7 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
           title: const Text('My Requests',
               style: TextStyle(fontWeight: FontWeight.bold)),
           centerTitle: true,
-          backgroundColor: Colors.pink.shade200),
+          backgroundColor: Colors.deepOrange.shade200),
       drawer: const UserDrawer(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -106,8 +106,17 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.1,
                 width: MediaQuery.of(context).size.width * 0.8,
-                decoration: BoxDecoration(color: Colors.pink.shade200),
-                child: Center(child:Text(ingredients)),
+                decoration: BoxDecoration(color: Colors.deepOrange.shade200),
+                child: Center(child:SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(ingredients),
+                      ),
+                    ],
+                  ),
+                )),
               ),
             )
           ],

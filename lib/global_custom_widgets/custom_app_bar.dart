@@ -28,7 +28,7 @@ class CustomAppBarWidget extends StatelessWidget
       automaticallyImplyLeading: false,
       systemOverlayStyle: SystemUiOverlayStyle(
         systemNavigationBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.pink.shade200, // Navigation bar
+        systemNavigationBarColor: Colors.deepOrange.shade200, // Navigation bar
         statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.light,
         statusBarIconBrightness: Brightness.light,

@@ -16,11 +16,13 @@ class ChefDetailsScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Stream<String> _listenForNewFare(String chefId) {
     // Stream to listen for new fare updates
-    return FirebaseFirestore.instance.collection('chef_offers')
+    return FirebaseFirestore.instance
+        .collection('chef_offers')
         .where('chefId', isEqualTo: chefId)
         .snapshots()
         .map((snapshot) => snapshot.docs.first.data()['newFare'] as String);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,9 +52,7 @@ class RequestCard extends StatelessWidget {
         .collection('chef_ratings')
         .where('chefId', isEqualTo: chefId)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-        .map((doc) => doc.data())
-        .toList());
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
   @override
@@ -65,7 +65,7 @@ class RequestCard extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator(
-              color: Colors.pink,
+              color: Colors.deepOrange,
             ); // Show a loading indicator while fetching data
           }
           if (snapshot.hasError) {
@@ -75,9 +75,9 @@ class RequestCard extends StatelessWidget {
           return Card(
             elevation: 4,
             child: SizedBox(
-              height: MediaQuery.of(context).size.height* 0.5,
+              // height: MediaQuery.of(context).size.height * 0.5,
               child: Padding(
-                padding: EdgeInsets.all(2.h),
+                padding: EdgeInsets.all(12.h),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,8 +112,8 @@ class RequestCard extends StatelessWidget {
                                   width: double.infinity, // Set container width
                                   height: 100, // Set container height
                                   decoration: BoxDecoration(
-                                    color:
-                                        Colors.pinkAccent, // Placeholder color
+                                    color: Colors.deepOrange
+                                        .shade200, // Placeholder color
                                     borderRadius: BorderRadius.circular(
                                         10), // Optional: Add border radius
                                   ),
@@ -144,7 +144,6 @@ class RequestCard extends StatelessWidget {
                                   title: userData['Number'],
                                   label: "P.No",
                                 ),
-
                               ],
                             ),
                           ),
@@ -156,7 +155,6 @@ class RequestCard extends StatelessWidget {
                                   title: userData['Specialities'],
                                   label: "Specialities",
                                 ),
-
                                 CustomProductDetailSmallContainer(
                                   title: userData['Work Experience'],
                                   label: " Experience",
@@ -170,28 +168,30 @@ class RequestCard extends StatelessWidget {
                         title: userData['Email'],
                         label: "Mail",
                       ),
-                      StreamBuilder<DocumentSnapshot>(
-                        stream: FirebaseFirestore.instance.collection('chief_users').doc(user).snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var chefData = snapshot.data!.data() as Map<String, dynamic>;
-                            bool farePendingApproval = chefData['farePendingApproval'] ?? false; // Provides a default value if null.
-
-                            String displayFare = farePendingApproval
-                                ? 'New Fare (Pending): ${chefData['newFare'] ?? 'N/A'}'
-                                : 'Current Fare: ${chefData['fare'] ?? 'N/A'}';                            return Text(displayFare);
-                          } else if (snapshot.hasError) {
-                            return Text("Error: ${snapshot.error}");
-                          } else {
-                            return const CircularProgressIndicator();
-                          }
-                        },
-                      ),
-
-
-
-
-
+                      // StreamBuilder<DocumentSnapshot>(
+                      //   stream: FirebaseFirestore.instance
+                      //       .collection('chief_users')
+                      //       .doc(user)
+                      //       .snapshots(),
+                      //   builder: (context, snapshot) {
+                      //     if (snapshot.hasData) {
+                      //       var chefData =
+                      //           snapshot.data!.data() as Map<String, dynamic>;
+                      //       bool farePendingApproval =
+                      //           chefData['farePendingApproval'] ??
+                      //               false; // Provides a default value if null.
+                      //
+                      //       String displayFare = farePendingApproval
+                      //           ? 'New Fare (Pending): ${chefData['newFare'] ?? 'N/A'}'
+                      //           : 'Current Fare: ${chefData['fare'] ?? 'N/A'}';
+                      //       return Text(displayFare);
+                      //     } else if (snapshot.hasError) {
+                      //       return Text("Error: ${snapshot.error}");
+                      //     } else {
+                      //       return const CircularProgressIndicator();
+                      //     }
+                      //   },
+                      // ),
                       Padding(
                         padding: EdgeInsets.all(12.h),
                         child: StreamBuilder<List<Map<String, dynamic>>>(
@@ -202,8 +202,8 @@ class RequestCard extends StatelessWidget {
                             }
                             final ratings = ratingsSnapshot.data ?? [];
                             final averageRating = ratings
-                                .map((rating) => rating['rating'] as double)
-                                .fold(0.0, (sum, item) => sum + item) /
+                                    .map((rating) => rating['rating'] as double)
+                                    .fold(0.0, (sum, item) => sum + item) /
                                 (ratings.isNotEmpty ? ratings.length : 1);
 
                             return Column(
@@ -211,12 +211,15 @@ class RequestCard extends StatelessWidget {
                               children: [
                                 const Text(
                                   'Ratings and Reviews',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 8.h),
                                 if (ratings.isNotEmpty)
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '⭐ Average Rating: ${averageRating.toStringAsFixed(1)}',
@@ -224,11 +227,13 @@ class RequestCard extends StatelessWidget {
                                       ),
                                       SizedBox(height: 8.h),
                                       ...ratings.map(
-                                            (rating) => Padding(
-                                          padding: const EdgeInsets.only(top: 4.0),
+                                        (rating) => Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 4.0),
                                           child: Text(
                                             '"${rating['review']}" - ${rating['rating']} ⭐',
-                                            style: const TextStyle(fontSize: 14),
+                                            style:
+                                                const TextStyle(fontSize: 14),
                                           ),
                                         ),
                                       ),

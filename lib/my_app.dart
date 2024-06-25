@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         builder: (_, child) {
           return MaterialApp(
             theme: ThemeData(
-              scaffoldBackgroundColor: Colors.pink.shade200,
+              scaffoldBackgroundColor: Colors.deepOrange.shade200,
             ),
             debugShowCheckedModeBanner: false,
             title: 'Chief',

@@ -29,7 +29,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
         final shouldPop = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: Colors.pinkAccent,
+             backgroundColor: Colors.deepOrange.shade200,
             title: Text(
               'Exit App',
               style: TextStyle(
@@ -74,7 +74,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
           Flexible(
             child: Image.asset(
               AppAssets.imgCookingBro,
-              height: MediaQuery.of(context).size.height * 0.2.h,
+              height: MediaQuery.of(context).size.height * 0.3.h,
             ),
           ),
           Padding(

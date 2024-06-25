@@ -80,9 +80,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           decoration: InputDecoration(
             label: widget.label != null ? Text(widget.label!) : null,
             floatingLabelBehavior: FloatingLabelBehavior.auto,
-            hintText: widget.hintText,
-            hintStyle: TextStyle(color: Colors.transparent, fontSize: 14.sp),
-            labelStyle: TextStyle(color: Colors.black, fontSize: 14.sp),
+            // hintText: widget.hintText,
+            // hintStyle: TextStyle(color: Colors.transparent, fontSize: 14.sp),
+             labelStyle: TextStyle(color: Colors.black, fontSize: 14.sp),
             prefixIcon: widget.prefix,
             suffixIcon: _buildSuffixIcon(),
             contentPadding: EdgeInsets.symmetric(
@@ -92,7 +92,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(9.h),
               borderSide: const BorderSide(
-                color: Colors.transparent, // Adjust the border color as needed
+                color: Colors.black, // Adjust the border color as needed
                 width: 1.0, // Adjust the border width as needed
               ),
             ),

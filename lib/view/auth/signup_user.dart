@@ -76,7 +76,7 @@ class _SignupUserState extends State<SignupUser> {
                             radius: 50,
                             backgroundImage: userSelectedImage ? NetworkImage(_image!) : null,
                             child: !userSelectedImage
-                                ? Icon(Icons.person, size: 50)
+                                ? const Icon(Icons.person, size: 50)
                                 : null, // Show an icon if no image is selected
                           )
                               : Container(
@@ -243,7 +243,7 @@ class _SignupUserState extends State<SignupUser> {
         barrierDismissible: false,
         builder: (context) => const Center(
               child: CircularProgressIndicator(
-                color: Colors.pink,
+                color: Colors.deepOrange,
               ),
             ));
     try {
@@ -258,24 +258,6 @@ class _SignupUserState extends State<SignupUser> {
       Navigator.of(context).pop(); // Dismiss the loading dialog
     }
   }
-
-
-
-  // Future<void> _pickImage(ImageSource source) async {
-  //   String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-  //   final picker = ImagePicker();
-  //   final pickedImage = await picker.pickImage(source: source);
-  //   imagePath = pickedImage!.path;
-  //   userSelectedImage = true;
-  //   final Reference storageReference =
-  //       FirebaseStorage.instance.ref().child('images/$filename');
-  //   UploadTask uploadTask = storageReference.putFile(File(pickedImage.path));
-  //   await uploadTask.whenComplete(() => null);
-  //   String imagepath = await storageReference.getDownloadURL();
-  //   setState(() {
-  //     _image = imagepath;
-  //   });
-  // }
   Future<void> _pickImage() async {
     showModalBottomSheet(
       context: context,
