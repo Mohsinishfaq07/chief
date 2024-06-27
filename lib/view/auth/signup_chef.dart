@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:chief/global_custom_widgets/custom_text_form_field.dart';
 import 'package:chief/model/app_database.dart';
-import 'package:chief/view/auth/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';

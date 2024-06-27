@@ -1,3 +1,4 @@
+import 'package:chief/firebase_services.dart';
 import 'package:chief/provider/chief_dashboard_provider.dart';
 import 'package:chief/provider/chief_orders_provider.dart';
 import 'package:chief/provider/user_myorders_provider.dart';
@@ -23,6 +24,9 @@ void main() async {
     appleProvider: AppleProvider.debug,
     // webProvider: ReCaptchaV3Provider(kWebRecaptchaSiteKey),
   );
+  FirebaseApi firebaseApi = FirebaseApi();
+  await firebaseApi.initNotification();
+
 
   runApp(
     MultiProvider(
