@@ -72,13 +72,15 @@ class _SignupUserState extends State<SignupUser> {
                           },
                           child: userSelectedImage
                               ? // Check if user has selected an image
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: userSelectedImage ? NetworkImage(_image!) : null,
-                            child: !userSelectedImage
-                                ? const Icon(Icons.person, size: 50)
-                                : null, // Show an icon if no image is selected
-                          )
+                              CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage: userSelectedImage
+                                      ? NetworkImage(_image!)
+                                      : null,
+                                  child: !userSelectedImage
+                                      ? const Icon(Icons.person, size: 50)
+                                      : null, // Show an icon if no image is selected
+                                )
                               : Container(
                                   height: 80,
                                   width: 80,
@@ -196,10 +198,10 @@ class _SignupUserState extends State<SignupUser> {
               CustomLargeButton(
                 title: 'Signup',
                 ontap: () {
-                  if (!userSelectedImage) {
-                    Fluttertoast.showToast(msg: 'Please upload an image to proceed');
-                    return;
-                  }
+                  // if (!userSelectedImage) {
+                  //   Fluttertoast.showToast(msg: 'Please upload an image to proceed');
+                  //   return;
+                  // }
                   if (nameController.text.isEmpty ||
                       numberController.text.isEmpty ||
                       addressController.text.isEmpty ||
@@ -250,14 +252,15 @@ class _SignupUserState extends State<SignupUser> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((uid) => {
-                database.userDetailsToFireStore(
-                    context, name, number, address, email, pass, _image ?? "helo")
+                database.userDetailsToFireStore(context, name, number, address,
+                    email, pass, _image ?? "helo")
               });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
       Navigator.of(context).pop(); // Dismiss the loading dialog
     }
   }
+
   Future<void> _pickImage() async {
     showModalBottomSheet(
       context: context,
@@ -270,14 +273,14 @@ class _SignupUserState extends State<SignupUser> {
                   title: const Text('Pick from gallery'),
                   onTap: () async {
                     Navigator.pop(context);
-                    _pickImageFromSource(ImageSource.gallery);
+                    //_pickImageFromSource(ImageSource.gallery);
                   }),
               ListTile(
                   leading: const Icon(Icons.photo_camera),
                   title: const Text('Take a picture'),
                   onTap: () async {
                     Navigator.pop(context);
-                    _pickImageFromSource(ImageSource.camera);
+                    //   _pickImageFromSource(ImageSource.camera);
                   }),
             ],
           ),
@@ -293,7 +296,8 @@ class _SignupUserState extends State<SignupUser> {
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final Reference storageReference = FirebaseStorage.instance.ref().child('images/$filename');
+      final Reference storageReference =
+          FirebaseStorage.instance.ref().child('images/$filename');
       UploadTask uploadTask = storageReference.putFile(imageFile);
 
       try {

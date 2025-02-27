@@ -41,47 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBnb7NO72S2RNnjZcqCbGKRlP5E_pH05wI',
-    appId: '1:840194869259:web:eff6d29fe71bcf160a1f0e',
-    messagingSenderId: '840194869259',
-    projectId: 'chief-24f12',
-    authDomain: 'chief-24f12.firebaseapp.com',
-    storageBucket: 'chief-24f12.appspot.com',
+    apiKey: 'AIzaSyAEbdlH3FpvkaXzDshsToSZ_Z7k0p95j5c',
+    appId: '1:231264327549:web:28dd18190a5d595cf0de14',
+    messagingSenderId: '231264327549',
+    projectId: 'booking-bab28',
+    authDomain: 'booking-bab28.firebaseapp.com',
+    storageBucket: 'booking-bab28.firebasestorage.app',
+    measurementId: 'G-PZX9Z7YFYN',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBzPSWQoMd5-W3jz58yGpRqqoqSypAUCag',
-    appId: '1:840194869259:android:638051a1ba0a42fa0a1f0e',
-    messagingSenderId: '840194869259',
-    projectId: 'chief-24f12',
-    storageBucket: 'chief-24f12.appspot.com',
+    apiKey: 'AIzaSyC0oU00gjGXfMJDDMjanNOfSKMx94WHc5s',
+    appId: '1:231264327549:android:3fc4dd074223ffc1f0de14',
+    messagingSenderId: '231264327549',
+    projectId: 'booking-bab28',
+    storageBucket: 'booking-bab28.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCtONtWJc3fD2ciuN4ZPV9u6Zd4WHX2v8Y',
-    appId: '1:840194869259:ios:3fc134f04d57e7c80a1f0e',
-    messagingSenderId: '840194869259',
-    projectId: 'chief-24f12',
-    storageBucket: 'chief-24f12.appspot.com',
+    apiKey: 'AIzaSyD9aEjxu2kfOgi0tDukmGm2zCSNXsLQyzI',
+    appId: '1:231264327549:ios:2d8f01c00d29aad4f0de14',
+    messagingSenderId: '231264327549',
+    projectId: 'booking-bab28',
+    storageBucket: 'booking-bab28.firebasestorage.app',
     iosBundleId: 'com.example.chief',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCtONtWJc3fD2ciuN4ZPV9u6Zd4WHX2v8Y',
-    appId: '1:840194869259:ios:3fc134f04d57e7c80a1f0e',
-    messagingSenderId: '840194869259',
-    projectId: 'chief-24f12',
-    storageBucket: 'chief-24f12.appspot.com',
+    apiKey: 'AIzaSyD9aEjxu2kfOgi0tDukmGm2zCSNXsLQyzI',
+    appId: '1:231264327549:ios:2d8f01c00d29aad4f0de14',
+    messagingSenderId: '231264327549',
+    projectId: 'booking-bab28',
+    storageBucket: 'booking-bab28.firebasestorage.app',
     iosBundleId: 'com.example.chief',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBnb7NO72S2RNnjZcqCbGKRlP5E_pH05wI',
-    appId: '1:840194869259:web:ccbcfa198f02e5a40a1f0e',
-    messagingSenderId: '840194869259',
-    projectId: 'chief-24f12',
-    authDomain: 'chief-24f12.firebaseapp.com',
-    storageBucket: 'chief-24f12.appspot.com',
+    apiKey: 'AIzaSyAEbdlH3FpvkaXzDshsToSZ_Z7k0p95j5c',
+    appId: '1:231264327549:web:44a3389d68c9453af0de14',
+    messagingSenderId: '231264327549',
+    projectId: 'booking-bab28',
+    authDomain: 'booking-bab28.firebaseapp.com',
+    storageBucket: 'booking-bab28.firebasestorage.app',
+    measurementId: 'G-WBNPKK6T7L',
   );
-
 }

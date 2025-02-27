@@ -1,3 +1,4 @@
+import 'package:chief/firebase_options.dart';
 import 'package:chief/firebase_services.dart';
 import 'package:chief/provider/chief_dashboard_provider.dart';
 import 'package:chief/provider/chief_orders_provider.dart';
@@ -9,7 +10,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'firebase_options.dart';
 import 'my_app.dart';
 
 void main() async {
@@ -18,7 +18,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseAppCheck.instance
-  // Your personal reCaptcha public key goes here:
+      // Your personal reCaptcha public key goes here:
       .activate(
     androidProvider: AndroidProvider.debug,
     appleProvider: AppleProvider.debug,
@@ -26,7 +26,6 @@ void main() async {
   );
   FirebaseApi firebaseApi = FirebaseApi();
   await firebaseApi.initNotification();
-
 
   runApp(
     MultiProvider(

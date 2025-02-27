@@ -61,10 +61,10 @@ class _SignupChefState extends State<SignupChef> {
       bottomNavigationBar: CustomLargeButton(
           title: 'Signup',
           ontap: () {
-            if (!userSelectedImage) {
-              Fluttertoast.showToast(msg: 'Please upload an image to proceed');
-              return;
-            }
+            // if (!userSelectedImage) {
+            //   Fluttertoast.showToast(msg: 'Please upload an image to proceed');
+            //   return;
+            // }
             if (nameController.text.isEmpty ||
                 numberController.text.isEmpty ||
                 addressController.text.isEmpty ||
@@ -333,44 +333,44 @@ class _SignupChefState extends State<SignupChef> {
   }
 
   onTapSignupUser(
-      BuildContext context,
-      String name,
-      String number,
-      String address,
-      String email,
-      String pass,
-      String experience,
-      String speciality,
-      String certificate,
-      String certificateImage,
-      ) async {
+    BuildContext context,
+    String name,
+    String number,
+    String address,
+    String email,
+    String pass,
+    String experience,
+    String speciality,
+    String certificate,
+    String certificateImage,
+  ) async {
     FocusScope.of(context).unfocus();
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(
-          child: CircularProgressIndicator(
-            color: Colors.pink,
-          ),
-        ));
+              child: CircularProgressIndicator(
+                color: Colors.pink,
+              ),
+            ));
     try {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((uid) => {
-        database.chefDetailToFireStore(
-            context,
-            name,
-            number,
-            address,
-            email,
-            pass,
-            experience,
-            speciality,
-            certificate,
-            _image,
-            certificateImage,
-            0),
-      });
+                database.chefDetailToFireStore(
+                    context,
+                    name,
+                    number,
+                    address,
+                    email,
+                    pass,
+                    experience,
+                    speciality,
+                    certificate,
+                    _image,
+                    certificateImage,
+                    0),
+              });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
       Navigator.of(context).pop(); // Dismiss the loading dialog
@@ -400,9 +400,9 @@ class _SignupChefState extends State<SignupChef> {
       onTap: () {
         Navigator.pop(context);
         if (txt == 'Gallery') {
-          _pickImage(ImageSource.gallery, text);
+          // _pickImage(ImageSource.gallery, text);
         } else {
-          _pickImage(ImageSource.camera, text);
+          //  _pickImage(ImageSource.camera, text);
         }
       },
       child: Column(
@@ -422,23 +422,28 @@ class _SignupChefState extends State<SignupChef> {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: source);
     if (pickedImage != null) {
-      File imageFile = File(pickedImage.path);
-      String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final Reference storageReference =
-          FirebaseStorage.instance.ref().child('images/$filename');
-      UploadTask uploadTask = storageReference.putFile(imageFile);
-      await uploadTask;
-      final String downloadUrl = await storageReference.getDownloadURL();
-      setState(() {
-        if (txt == 'certificate') {
-          certificateImage = downloadUrl; // This should be the download URL
-          userSelectCertificate = true;
-        } else if (txt == '') {
-          userSelectedImage = true;
-          _image =
-              downloadUrl; // Also set _image to the download URL if necessary
-        }
-      });
+      try {
+        File imageFile = File(pickedImage.path);
+        String filename = 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final Reference storageReference =
+            FirebaseStorage.instance.ref().child('images/$filename');
+        UploadTask uploadTask = storageReference.putFile(imageFile);
+        await uploadTask;
+        final String downloadUrl = await storageReference.getDownloadURL();
+        setState(() {
+          if (txt == 'certificate') {
+            certificateImage = downloadUrl; // This should be the download URL
+            userSelectCertificate = true;
+          } else if (txt == '') {
+            userSelectedImage = true;
+            _image =
+                downloadUrl; // Also set _image to the download URL if necessary
+          }
+        });
+      } catch (e) {
+        Fluttertoast.showToast(msg: '$e');
+        debugPrint('error in uploading image in storage $e');
+      }
     }
   }
 }

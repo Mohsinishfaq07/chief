@@ -1,26 +1,79 @@
 {
   "project_info": {
-    "project_number": "840194869259",
-    "project_id": "chief-24f12",
-    "storage_bucket": "chief-24f12.appspot.com"
+    "project_number": "231264327549",
+    "project_id": "booking-bab28",
+    "storage_bucket": "booking-bab28.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:840194869259:android:638051a1ba0a42fa0a1f0e",
+        "mobilesdk_app_id": "1:231264327549:android:14c87ef5972e380cf0de14",
         "android_client_info": {
-          "package_name": "com.example.chief"
+          "package_name": "com.app.booking"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "231264327549-u193fbv31afs9lr1se2h4ck9kdpj5hv9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBzPSWQoMd5-W3jz58yGpRqqoqSypAUCag"
+          "current_key": "AIzaSyC0oU00gjGXfMJDDMjanNOfSKMx94WHc5s"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231264327549-u193fbv31afs9lr1se2h4ck9kdpj5hv9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "231264327549-3hmon1noa065iuju5r9mhu54jc80g902.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.booking"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231264327549:android:3fc4dd074223ffc1f0de14",
+        "android_client_info": {
+          "package_name": "com.example.chief"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231264327549-u193fbv31afs9lr1se2h4ck9kdpj5hv9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0oU00gjGXfMJDDMjanNOfSKMx94WHc5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231264327549-u193fbv31afs9lr1se2h4ck9kdpj5hv9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "231264327549-3hmon1noa065iuju5r9mhu54jc80g902.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.app.booking"
+              }
+            }
+          ]
         }
       }
     }

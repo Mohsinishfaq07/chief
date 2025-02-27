@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
- import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,14 +37,15 @@ class AppDatabase {
         Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) =>   const ChefDashboardScreen()),
+          MaterialPageRoute(builder: (context) => const ChefDashboardScreen()),
           (Route<dynamic> route) => false,
         );
       } else if (role == 'user') {
         Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const UserDashboardRequestForm()),
+          MaterialPageRoute(
+              builder: (context) => const UserDashboardRequestForm()),
           (Route<dynamic> route) => false,
         );
       }
@@ -138,8 +139,7 @@ class AppDatabase {
       String certificate,
       String image,
       String certificateimage,
-     int rating
-      ) async {
+      int rating) async {
     var user = _auth.currentUser;
     CollectionReference ref =
         FirebaseFirestore.instance.collection('chief_users');
@@ -303,21 +303,20 @@ class AppDatabase {
   }
 
   Future<void> addRequest(
-    BuildContext context,
-    String userid,
-    String itemName,
-    String date,
-    String arrivelTime,
-    String eventTime,
-    String noOfPeople,
-    int fare,
-    String availabeingred,
-    String name,
-    String image,
-    String collection,
-    String action,
-    String status
-  ) async {
+      BuildContext context,
+      String userid,
+      String itemName,
+      String date,
+      String arrivelTime,
+      String eventTime,
+      String noOfPeople,
+      int fare,
+      String availabeingred,
+      String name,
+      String image,
+      String collection,
+      String action,
+      String status) async {
     final user = _auth.currentUser;
     try {
       CollectionReference ref =
@@ -330,7 +329,7 @@ class AppDatabase {
         'Date': date,
         'Arrivel_Time': arrivelTime,
         'Event_Time': eventTime,
-        'No_of_People':noOfPeople,
+        'No_of_People': noOfPeople,
         'Fare': fare,
         'image': image,
         'Availabe_Ingredients': availabeingred,
@@ -342,12 +341,11 @@ class AppDatabase {
     if (collection == 'request_form') {
       Fluttertoast.showToast(msg: "Request Added");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) =>
-          const UserDashboardRequestForm()
-      ));
+          builder: (context) => const UserDashboardRequestForm()));
     }
   }
-  Future<void>  cookSideRequest(
+
+  Future<void> cookSideRequest(
       BuildContext context,
       String userid,
       String itemName,
@@ -364,12 +362,11 @@ class AppDatabase {
       String status,
       String cookPhoneNumber,
       String cookEmail,
-      String cookId
-      ) async {
+      String cookId) async {
     final user = _auth.currentUser;
     try {
       CollectionReference ref =
-      FirebaseFirestore.instance.collection(collection);
+          FirebaseFirestore.instance.collection(collection);
       ref.doc().set({
         'userid': user!.uid,
         'addedby': userid,
@@ -385,10 +382,9 @@ class AppDatabase {
         'image': image,
         'timestamp': FieldValue.serverTimestamp(),
         'status': status,
-        'cookPhoneNumber' : cookPhoneNumber,
+        'cookPhoneNumber': cookPhoneNumber,
         'cookEmail': cookEmail,
-        'cookId' : cookId
-
+        'cookId': cookId
       });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
@@ -396,28 +392,28 @@ class AppDatabase {
     if (collection == 'request_form') {
       Fluttertoast.showToast(msg: "Request Added");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const UserDashboardRequestForm()
-      ));
+          builder: (context) => const UserDashboardRequestForm()));
     }
   }
 
-   Future<void> addAcceptedRequest(
-      BuildContext context,
-      String userid,
-      String shiefid,
-      String itemName,
-      String date,
-      String arrivelTime,
-      String eventTime,
-      String noOfPeople,
-      int fare,
-      String availabeingred,
-      String name,
-      String image,
-      String collection,
-      ) async {
+  Future<void> addAcceptedRequest(
+    BuildContext context,
+    String userid,
+    String shiefid,
+    String itemName,
+    String date,
+    String arrivelTime,
+    String eventTime,
+    String noOfPeople,
+    int fare,
+    String availabeingred,
+    String name,
+    String image,
+    String collection,
+  ) async {
     try {
-      CollectionReference ref = FirebaseFirestore.instance.collection(collection);
+      CollectionReference ref =
+          FirebaseFirestore.instance.collection(collection);
       ref.doc().set({
         'shiefid': shiefid,
         'userid': userid,
@@ -440,28 +436,27 @@ class AppDatabase {
     }
   }
 
-
-
   Future<void> addChefRequest(
-      BuildContext context,
-      String documentId,
-      String userid,
-      String itemName,
-      String date,
-      String arrivelTime,
-      String eventTime,
-      String noOfPeople,
-      int fare,
-      String availabeingred,
-      String name,
-      String image,
-      String collection,
-      String rating,
-      int newfare,
-      ) async {
+    BuildContext context,
+    String documentId,
+    String userid,
+    String itemName,
+    String date,
+    String arrivelTime,
+    String eventTime,
+    String noOfPeople,
+    int fare,
+    String availabeingred,
+    String name,
+    String image,
+    String collection,
+    String rating,
+    int newfare,
+  ) async {
     final user = _auth.currentUser;
     try {
-      CollectionReference ref = FirebaseFirestore.instance.collection(collection);
+      CollectionReference ref =
+          FirebaseFirestore.instance.collection(collection);
       ref.doc().set({
         'shiefid': user!.uid,
         'userid': userid,
@@ -487,10 +482,12 @@ class AppDatabase {
     }
   }
 
-
 // Method to handle acceptance of a request by a user
   Future<void> acceptRequestAndUpdateVisibility(String requestId) async {
-    await FirebaseFirestore.instance.collection('new_requestform').doc(requestId).update({
+    await FirebaseFirestore.instance
+        .collection('new_requestform')
+        .doc(requestId)
+        .update({
       'status': 'accepted', // Indicate that the request has been accepted
       'isVisibleToChef': false, // No longer visible on Chef's Dashboard
       'isVisibleToUser': true, // Still visible to the user in My Orders
@@ -520,27 +517,32 @@ class AppDatabase {
   //   });
   // }
 
-
   // Method to handle acceptance of a request by a chef
 // In AppDatabase class
   // In AppDatabase or wherever you handle Firestore operations
   Future<void> chefAcceptsRequest(String requestId) async {
-    await FirebaseFirestore.instance.collection('new_requestform').doc(requestId).update({
-      'Action': 'in processing',  // Indicate that the chef has accepted the request but it's not finalized
+    await FirebaseFirestore.instance
+        .collection('new_requestform')
+        .doc(requestId)
+        .update({
+      'Action':
+          'in processing', // Indicate that the chef has accepted the request but it's not finalized
     }).then((value) {
-      Fluttertoast.showToast(msg: "Request accepted, awaiting user confirmation.");
+      Fluttertoast.showToast(
+          msg: "Request accepted, awaiting user confirmation.");
     }).catchError((error) {
       Fluttertoast.showToast(msg: "Error accepting request: $error");
     });
   }
 
-
 // Method to handle acceptance of a request by a user
   Future<void> userAcceptsRequest(String requestId) async {
     await _firestore.collection('accepted_requests').doc(requestId).update({
       'status': 'accepted',
-      'isVisibleToChef': false,  // This request should no longer be visible in the chef's request queue
-      'isVisibleToUser': true,   // Should still be visible to the user until completely processed
+      'isVisibleToChef':
+          false, // This request should no longer be visible in the chef's request queue
+      'isVisibleToUser':
+          true, // Should still be visible to the user until completely processed
       // ...additional updates if needed
     }).then((value) {
       Fluttertoast.showToast(msg: "Request accepted by user.");
@@ -548,6 +550,7 @@ class AppDatabase {
       Fluttertoast.showToast(msg: "Error on user's acceptance: $error");
     });
   }
+
   Future<void> acceptRequest(BuildContext context, String documentId) async {
     await _firestore.collection('request_form').doc(documentId).update({
       'Action': 'accepted', // Update the action to 'accepted'
@@ -560,14 +563,15 @@ class AppDatabase {
     });
   }
 
-
   Future<String> getUserName() async {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
-        DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore.collection('allusers').doc(user.uid).get();
+        DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await _firestore.collection('allusers').doc(user.uid).get();
         if (snapshot.exists && snapshot.data() != null) {
-          return snapshot.data()!['Name'] ?? 'No Name';  // Assuming 'Name' is the field in Firestore
+          return snapshot.data()!['Name'] ??
+              'No Name'; // Assuming 'Name' is the field in Firestore
         } else {
           return 'No Name';
         }
@@ -579,6 +583,7 @@ class AppDatabase {
       return 'Error';
     }
   }
+
   Future<void> completeOrder(String documentId) async {
     try {
       // Update the order's status to 'completed'
@@ -610,7 +615,6 @@ class AppDatabase {
       return false; // or handle the exception as needed
     }
   }
-
 }
 
 class EmailVerificationDialog extends StatefulWidget {
@@ -619,7 +623,8 @@ class EmailVerificationDialog extends StatefulWidget {
   EmailVerificationDialog({required this.user});
 
   @override
-  _EmailVerificationDialogState createState() => _EmailVerificationDialogState();
+  _EmailVerificationDialogState createState() =>
+      _EmailVerificationDialogState();
 }
 
 class _EmailVerificationDialogState extends State<EmailVerificationDialog> {
@@ -647,15 +652,18 @@ class _EmailVerificationDialogState extends State<EmailVerificationDialog> {
   }
 
   Future<void> _checkEmailVerification() async {
-    await widget.user.reload(); // Reload the user's data to get the latest status
+    await widget.user
+        .reload(); // Reload the user's data to get the latest status
     setState(() {
       _isEmailVerified = widget.user.emailVerified;
     });
 
     if (_isEmailVerified) {
-      Navigator.of(context).pop(true); // Close dialog and return true if email is verified
+      Navigator.of(context)
+          .pop(true); // Close dialog and return true if email is verified
     } else {
-      Fluttertoast.showToast(msg: "Email not verified yet. Please check your email.");
+      Fluttertoast.showToast(
+          msg: "Email not verified yet. Please check your email.");
     }
   }
 
@@ -672,7 +680,8 @@ class _EmailVerificationDialogState extends State<EmailVerificationDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("You need to verify your email to complete the sign-up process."),
+          Text(
+              "You need to verify your email to complete the sign-up process."),
           SizedBox(height: 10),
           Text("Returning in $_secondsRemaining seconds..."),
           SizedBox(height: 10),
