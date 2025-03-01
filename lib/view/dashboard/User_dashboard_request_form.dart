@@ -250,9 +250,10 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                       fare: fareController.text,
                       ingredients: availableIngController.text,
                       clientId: FirebaseAuth.instance.currentUser!.uid,
-                      acceptedChiefId: '',
-                      declinedChiefIds: [],
-                      acceptedChiefIds: [],
+                      acceptedChiefId: 'noChiefSelected',
+                      chefResponses: [
+                        {'userId': 'dummyId', 'orderStatus': false},
+                      ],
                     ),
                   );
                 }

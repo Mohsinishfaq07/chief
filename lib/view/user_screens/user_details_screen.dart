@@ -1,12 +1,11 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:chief/global_custom_widgets/custom_app_bar.dart';
- import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_title_text.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
+import '../../model/client_detail_model.dart';
 import '../auth/forgot_password.dart';
 
 class UserDetails extends StatelessWidget {
@@ -45,61 +44,66 @@ class RequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(user)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(
-              color: Colors.orange,
-            ); // Show a loading indicator while fetching data
-          }
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          var userData = snapshot.data!.data() as Map<String, dynamic>;
-          return Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      UserInfoSection(image: userData['image']),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(userData['Name']),
-                      ),
-                    ],
-                  ),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomProductDetailSmallContainer(
-                          label: "Address", title: userData['Address']),
-                      CustomProductDetailSmallContainer(
-                        label: "Number",
-                        title: userData['Number'],
-                      ),
+      stream:
+          FirebaseFirestore.instance.collection('users').doc(user).snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(
+            color: Colors.orange,
+          );
+        }
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
 
-                    ],
-                  ),
-                  Column(children: [
+        final clientDetail = ClientDetailModel.fromJson(
+          snapshot.data!.data() as Map<String, dynamic>,
+        );
+
+        return Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    UserInfoSection(image: ''),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: Text(clientDetail.name),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomProductDetailSmallContainer(
+                        label: "Address", title: clientDetail.address),
+                    CustomProductDetailSmallContainer(
+                      label: "Number",
+                      title: clientDetail.number,
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
                     CustomProductDetailSmallContainer(
                       label: "Email",
-                      title: userData['Email'],
+                      title: clientDetail.email,
                     ),
                     CustomProductDetailSmallContainer(
                       label: "Role",
-                      title: userData['role'],
+                      title: clientDetail.role,
                     ),
-                  ],)
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

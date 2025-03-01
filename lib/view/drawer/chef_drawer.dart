@@ -1,3 +1,4 @@
+import 'package:chief/view/all_chefs/all_chefs.dart';
 import 'package:chief/view/get_started_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,12 @@ class ChefDrawer extends StatelessWidget {
               AppAssets.imgCookingBro,
               height: MediaQuery.of(context).size.height * 0.2.h,
             ),
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.cookie,
+            text: 'All Chefs',
+            routeName: AllChefs.tag,
           ),
           _buildDrawerItem(
             context: context,

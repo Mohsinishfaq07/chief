@@ -1,27 +1,25 @@
+import 'package:chief/view/chef_screens/chef_details_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
 import '../../model/app_database.dart';
-import '../chef_screens/chef_details_screen.dart';
+import '../../model/request_model.dart'; // Import the RequestModel
+import '../../provider/chief_dashboard_provider.dart';
 import '../drawer/user_drawer.dart';
+import '../rating_screens/rating_screen.dart';
 
-class UserRequestQueueScreen extends StatefulWidget {
-  const UserRequestQueueScreen({super.key});
-  static const tag = 'UserRequestQueScreen';
-
-  @override
-  State<UserRequestQueueScreen> createState() => _UserRequestQueueScreenState();
-}
-
-class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+// ignore: must_be_immutable
+class UserMyOrdersScreen extends StatelessWidget {
+  UserMyOrdersScreen({super.key});
+  static const String tag = "MyOrderScreen";
   AppDatabase database = AppDatabase();
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final user = FirebaseAuth.instance.currentUser;
 
   @override
@@ -29,212 +27,231 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-          title: const Text('Request Queue ',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          backgroundColor: Colors.deepOrange.shade200),
+        title: const Text('My Orders',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.deepOrange.shade200,
+      ),
       drawer: const UserDrawer(),
       body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w),
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('chiefrequests')
-                .where('userid', isEqualTo: user!.uid)
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasData) {
-                // requestData.updateRequests(snapshot.data!.docs);
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    DocumentSnapshot document = snapshot.data!.docs[index];
-                    Map<String, dynamic>? data =
-                        document.data() as Map<String, dynamic>;
-                    Timestamp timestamp = data['timestamp'];
-                    // Convert Firestore Timestamp to DateTime
-                    DateTime dateTime = timestamp.toDate();
-                    int newfare =
-                        data['New_fare'] == 0 ? data['Fare'] : data['New_fare'];
-                    // Extract date and time components
-                    int year = dateTime.year;
-                    int month = dateTime.month;
-                    int day = dateTime.day;
-                    int hour = dateTime.hour;
-                    int minute = dateTime.minute;
-                    return Card(
-                      elevation: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  children: [
-                                    UserInfoSection(image: data['image']),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomProductDetailSmallContainer(
-                                        title: data['Arrivel_Time']),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      // {
-                                      //   // Function to show bottom sheet when this widget is tapped
-                                      //   _showFareBottomSheet(
-                                      //       context,
-                                      //       data['Fare'],
-                                      //       document.id);
-                                      // }
-                                      // ,
-                                      child: CustomProductDetailSmallContainer(
-                                        label: "Fare",
-                                        title: data['New_fare'] == 0
-                                            ? data['Fare'].toString()
-                                            : "${data['Fare']}+${data['New_fare'] - data['Fare']}",
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {},
-                                      // {
-                                      //   // Function to show bottom sheet when this widget is tapped
-                                      //   _showFareBottomSheet(
-                                      //       context,
-                                      //       data['Fare'],
-                                      //       document.id);
-                                      // }
-                                      // ,
-                                      child: CustomProductDetailSmallContainer(
-                                        label: "Dish",
-                                        title: data['Item_Name'],
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        database.addAcceptedRequest(
-                                          context,
-                                          data['userid'],
-                                          data['shiefid'],
-                                          data['Item_Name'],
-                                          data['Date'],
-                                          data['Arrivel_Time'],
-                                          data['Event_Time'],
-                                          data['No_of_People'],
-                                          newfare,
-                                          data['Availabe_Ingredients'],
-                                          data['User_Name'],
-                                          data['image'],
-                                          'accepted_requests',
-                                        );
-                                        await FirebaseFirestore.instance
-                                            .collection('chiefrequests')
-                                            .doc(document.id)
-                                            .delete();
-                                        await FirebaseFirestore.instance
-                                            .collection('request_form')
-                                            .doc(
-                                              data['oldDocumentid'],
-                                            )
-                                            .delete();
-                                      },
-                                      child: Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.06.h,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.26.w,
-                                          decoration: BoxDecoration(
-                                            color: Colors.deepOrange.shade200,
-                                          ),
-                                          child: const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Center(
-                                              child: Text(
-                                                "Accept",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 8, left: 5, right: 5),
-                              child: Row(
+        padding: EdgeInsets.symmetric(horizontal: 2.w),
+        child: Consumer<RequestData>(
+          builder: (context, requestData, _) {
+            return StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('food_orders') // Use the correct collection name
+                  .where('clientId', isEqualTo: user!.uid) // Match clientId
+                  .where('acceptedChiefId',
+                      isNotEqualTo:
+                          'noChiefSelected') // Ensure acceptedChiefId is not 'noChiefSelected'
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text("No active orders."));
+                  }
+
+                  // Parse Firestore data into RequestModel
+                  final requests = snapshot.data!.docs
+                      .map((doc) => RequestModel.fromJson(
+                            doc.data() as Map<String, dynamic>,
+                          ))
+                      .toList();
+
+                  return ListView.builder(
+                    itemCount: requests.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final request = requests[index];
+                      // final timestamp = request.timestamp; // Use the timestamp from RequestModel
+                      // final dateTime = timestamp.toDate();
+                      // final year = dateTime.year;
+                      // final month = dateTime.month;
+                      // final day = dateTime.day;
+                      // final hour = dateTime.hour;
+                      // final minute = dateTime.minute;
+
+                      return Card(
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text('Date: $day/$month/$year'),
-                                  CustomProductDetailSmallContainer(
-                                      label: "Chef Details",
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ChefDetailsScreen(
-                                                        userid:
-                                                            data['shiefid'])));
-                                      }
-                                      // title: data['shiefid'],
+                                  Column(
+                                    children: [
+                                      UserInfoSection(image: ''),
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.011.h,
                                       ),
-                                  // GestureDetector(
-                                  //   onTap: () {
-                                  //     Navigator.of(context).push(
-                                  //         MaterialPageRoute(
-                                  //             builder: (context) =>
-                                  //                 ChefDetailsScreen(
-                                  //                     userid:
-                                  //                         data['shiefid'])));
-                                  //   },
-                                  //   child: Container(
-                                  //     height:
-                                  //         MediaQuery.of(context).size.height /
-                                  //             22,
-                                  //     width:
-                                  //         MediaQuery.of(context).size.width / 4,
-                                  //     decoration: BoxDecoration(
-                                  //         color: Colors.pink.shade200),
-                                  //     child: const Center(
-                                  //         child: Text("ChiefDetails")),
-                                  //   ),
-                                  // ),
-                                  Text('Time: $hour:$minute')
+                                      SizedBox(
+                                        height: 22.h,
+                                      ),
+                                      CustomProductDetailSmallContainer(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChefDetailsScreen(
+                                                      userid: request
+                                                          .acceptedChiefId), // Use acceptedChiefId from RequestModel
+                                            ),
+                                          );
+                                        },
+                                        label: "Chef Details",
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomProductDetailSmallContainer(
+                                          label: "Item",
+                                          title: request
+                                              .itemName), // Use itemName from RequestModel
+                                      CustomProductDetailSmallContainer(
+                                          label: "People",
+                                          title: request
+                                              .totalPerson), // Use totalPerson from RequestModel
+                                      CustomProductDetailSmallContainer(
+                                          label: "Time",
+                                          title: request
+                                              .arrivalTime), // Use arrivalTime from RequestModel
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomProductDetailSmallContainer(
+                                        label: "Fare",
+                                        title: request
+                                            .fare, // Use fare from RequestModel
+                                      ),
+                                      CustomProductDetailSmallContainer(
+                                        label: "Date",
+                                        title: request
+                                            .date, // Use date from RequestModel
+                                      ),
+                                      CustomProductDetailSmallContainer(
+                                        label: "Time",
+                                        title: request
+                                            .eventTime, // Use eventTime from RequestModel
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
-                            )
-                          ],
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical:
+                                        MediaQuery.of(context).size.height *
+                                            0.006),
+                                child: Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.1,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.86.w,
+                                    decoration: BoxDecoration(
+                                        color: Colors.deepOrange.shade200),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                          child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            const Text(
+                                              "Available Ingredients",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(request
+                                                .ingredients), // Use ingredients from RequestModel
+                                          ],
+                                        ),
+                                      )),
+                                    )),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Container(
+                                    color: Colors.deepOrange.shade200,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.close,
+                                          color: Colors.black),
+                                      onPressed: () async {
+                                        await requestData.rejectRequest(context,
+                                            snapshot.data!.docs[index].id);
+                                        Fluttertoast.showToast(msg: 'Rejected');
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    color: Colors.deepOrange.shade200,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.check,
+                                          color: Colors.black),
+                                      onPressed: () async {
+                                        if (!await database.hasRatedChef(
+                                            request.acceptedChiefId,
+                                            user!.uid)) {
+                                          await database.completeOrder(
+                                              snapshot.data!.docs[index].id);
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) => RatingScreen(
+                                                chefId: request
+                                                    .acceptedChiefId), // Use acceptedChiefId from RequestModel
+                                          ));
+                                        } else {
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  'You have already rated this chef');
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(
+                              //       top: 8, left: 5, right: 5),
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //     children: [
+                              //       Text('Date: $day/$month/$year'),
+                              //       Text('Time: $hour:$minute')
+                              //     ],
+                              //   ),
+                              // )
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.pink.shade200,
-                )); // Or any other loading indicator
-              }
-            },
-          )),
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: Colors.pink.shade200,
+                  )); // Or any other loading indicator
+                }
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }

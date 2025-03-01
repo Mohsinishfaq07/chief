@@ -435,30 +435,43 @@ class AppDatabase {
     }
   }
 
-  Future<void> acceptByChief(
-      {required String docId, required String userId}) async {
+  Future<void> acceptByChief({
+    required String docId,
+    required String userId,
+  }) async {
     try {
       CollectionReference ref =
           FirebaseFirestore.instance.collection('food_orders');
 
       await ref.doc(docId).update({
-        'accepted_chief_ids': FieldValue.arrayUnion([userId]),
+        'chefResponses': FieldValue.arrayUnion([
+          {'userId': userId, 'orderStatus': true} // Accepted
+        ]),
+        'acceptedChiefId': userId,
       });
+
+      Fluttertoast.showToast(msg: 'Request accepted.');
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
       print("Error: $e");
     }
   }
 
-  Future<void> rejectByChief(
-      {required String docId, required String userId}) async {
+  Future<void> rejectByChief({
+    required String docId,
+    required String userId,
+  }) async {
     try {
       CollectionReference ref =
           FirebaseFirestore.instance.collection('food_orders');
 
       await ref.doc(docId).update({
-        'declined_chief_ids': FieldValue.arrayUnion([userId]),
+        'chefResponses': FieldValue.arrayUnion([
+          {'userId': userId, 'orderStatus': false} // Rejected
+        ]),
       });
+
+      Fluttertoast.showToast(msg: 'Request rejected.');
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
       print("Error: $e");

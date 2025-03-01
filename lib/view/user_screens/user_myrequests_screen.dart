@@ -1,5 +1,4 @@
-// ignore_for_file: deprecated_member_use, must_be_immutable
-
+import 'package:chief/model/request_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,10 +34,8 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
-              .collection('request_form')
-              .where('userid',
-                  isEqualTo: user!
-                      .uid) // Ensure this matches the user ID field in your documents
+              .collection('food_orders')
+              .where('clientId', isEqualTo: user!.uid)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -51,9 +48,11 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
               return ListView.builder(
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  var data =
-                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                  return buildRequestCard(context, data);
+                  // Parse Firestore data into RequestModel
+                  final request = RequestModel.fromJson(
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>,
+                  );
+                  return buildRequestCard(context, request);
                 },
               );
             } else {
@@ -65,21 +64,7 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
     );
   }
 
-  Widget buildRequestCard(BuildContext context, Map<String, dynamic> data) {
-    String itemName = data['Item_Name'] as String? ??
-        'No item name'; // Handle null and provide default
-    String numberOfPeople =
-        data['No_of_People'].toString(); // Converting to string directly
-    String arrivalTime = data['Arrivel_Time'] as String? ?? 'Not set';
-    String fare =
-        data['Fare'].toString(); // Assume this is a number and convert
-    String date = data['Date'] as String? ?? 'Date not set';
-    String eventTime = data['Event_Time'] as String? ?? 'Time not set';
-    String ingredients =
-        data['Availabe_Ingredients'] as String? ?? 'No ingredients listed';
-    String imageUrl =
-        data['image'] as String? ?? ''; // Handle potential null for image URL
-
+  Widget buildRequestCard(BuildContext context, RequestModel request) {
     return Card(
       elevation: 4,
       child: Padding(
@@ -89,21 +74,23 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                UserInfoSection(image: imageUrl),
+                UserInfoSection(image: ''),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomProductDetailSmallContainer(title: itemName),
-                    CustomProductDetailSmallContainer(title: numberOfPeople),
-                    CustomProductDetailSmallContainer(title: arrivalTime),
+                    CustomProductDetailSmallContainer(title: request.itemName),
+                    CustomProductDetailSmallContainer(
+                        title: request.totalPerson),
+                    CustomProductDetailSmallContainer(
+                        title: request.arrivalTime),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomProductDetailSmallContainer(title: fare),
-                    CustomProductDetailSmallContainer(title: date),
-                    CustomProductDetailSmallContainer(title: eventTime),
+                    CustomProductDetailSmallContainer(title: request.fare),
+                    CustomProductDetailSmallContainer(title: request.date),
+                    CustomProductDetailSmallContainer(title: request.eventTime),
                   ],
                 )
               ],
@@ -121,7 +108,7 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(ingredients),
+                        child: Text(request.ingredients),
                       ),
                     ],
                   ),

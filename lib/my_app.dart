@@ -1,10 +1,11 @@
+import 'package:chief/view/all_chefs/all_chefs.dart';
 import 'package:chief/view/dashboard/chef_dashboard_screen.dart';
 import 'package:chief/view/chef_screens/chef_myorders_screen.dart.dart';
 import 'package:chief/view/chef_screens/chef_request_queue_screen.dart';
 import 'package:chief/view/auth/signup_chef.dart';
 import 'package:chief/view/user_screens/user_details_screen.dart';
 import 'package:chief/view/user_screens/user_requestqueue_screen.dart';
-import 'package:chief/view/user_screens/user_myorders_screen.dart';
+import 'package:chief/view/user_screens/user_myorders_screen.dart' as userOrder;
 import 'package:chief/view/auth/forgot_password.dart';
 import 'package:chief/view/get_started_screen.dart';
 import 'package:chief/view/auth/login_screen.dart';
@@ -68,14 +69,16 @@ Route _generateRoute(RouteSettings settings) {
       return _createRightToLeftRoute(const RatingScreen(), settings);
     case UserMyOrdersScreen.tag:
       return _createRightToLeftRoute(UserMyOrdersScreen(), settings);
-    case UserRequestQueueScreen.tag:
-      return _createRightToLeftRoute(const UserRequestQueueScreen(), settings);
+    // case UserRequestQueueScreen.tag:
+    //   return _createRightToLeftRoute(const UserRequestQueueScreen(), settings);
     case ChiefRequestQueueScreen.tag:
       return _createRightToLeftRoute(ChiefRequestQueueScreen(), settings);
     case ChefMyOrderScreen.tag:
       return _createRightToLeftRoute(const ChefMyOrderScreen(), settings);
     case PendingRequestScreen.tag:
       return _createRightToLeftRoute(const PendingRequestScreen(), settings);
+    case AllChefs.tag:
+      return _createRightToLeftRoute(AllChefs(), settings);
     case UserDetails.tag:
       return _createRightToLeftRoute(UserDetails(), settings);
 
