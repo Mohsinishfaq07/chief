@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use, must_be_immutable
 
- import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,7 +36,9 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('request_form')
-              .where('userid', isEqualTo: user!.uid) // Ensure this matches the user ID field in your documents
+              .where('userid',
+                  isEqualTo: user!
+                      .uid) // Ensure this matches the user ID field in your documents
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -55,23 +57,28 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
                 },
               );
             } else {
-              return const Center(
-                  child: Text('No requests found.')) ;
+              return const Center(child: Text('No requests found.'));
             }
           },
         ),
       ),
     );
   }
+
   Widget buildRequestCard(BuildContext context, Map<String, dynamic> data) {
-    String itemName = data['Item_Name'] as String? ?? 'No item name';  // Handle null and provide default
-    String numberOfPeople = data['No_of_People'].toString();  // Converting to string directly
+    String itemName = data['Item_Name'] as String? ??
+        'No item name'; // Handle null and provide default
+    String numberOfPeople =
+        data['No_of_People'].toString(); // Converting to string directly
     String arrivalTime = data['Arrivel_Time'] as String? ?? 'Not set';
-    String fare = data['Fare'].toString();  // Assume this is a number and convert
+    String fare =
+        data['Fare'].toString(); // Assume this is a number and convert
     String date = data['Date'] as String? ?? 'Date not set';
     String eventTime = data['Event_Time'] as String? ?? 'Time not set';
-    String ingredients = data['Availabe_Ingredients'] as String? ?? 'No ingredients listed';
-    String imageUrl = data['image'] as String? ?? ''; // Handle potential null for image URL
+    String ingredients =
+        data['Availabe_Ingredients'] as String? ?? 'No ingredients listed';
+    String imageUrl =
+        data['image'] as String? ?? ''; // Handle potential null for image URL
 
     return Card(
       elevation: 4,
@@ -82,7 +89,7 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                UserInfoSection(image:imageUrl),
+                UserInfoSection(image: imageUrl),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -91,7 +98,8 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
                     CustomProductDetailSmallContainer(title: arrivalTime),
                   ],
                 ),
-                Column(crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomProductDetailSmallContainer(title: fare),
                     CustomProductDetailSmallContainer(title: date),
@@ -107,7 +115,8 @@ class _PendingRequestScreenState extends State<PendingRequestScreen> {
                 height: MediaQuery.of(context).size.height * 0.1,
                 width: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(color: Colors.deepOrange.shade200),
-                child: Center(child:SingleChildScrollView(
+                child: Center(
+                    child: SingleChildScrollView(
                   child: Column(
                     children: [
                       Padding(

@@ -1,4 +1,4 @@
- import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,7 +38,7 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
           padding: EdgeInsets.symmetric(horizontal: 4.w),
           child: StreamBuilder(
             stream: FirebaseFirestore.instance
-                .collection('shiefrequests')
+                .collection('chiefrequests')
                 .where('userid', isEqualTo: user!.uid)
                 .snapshots(),
             builder:
@@ -54,9 +54,8 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                     Timestamp timestamp = data['timestamp'];
                     // Convert Firestore Timestamp to DateTime
                     DateTime dateTime = timestamp.toDate();
-                    int newfare = data['New_fare'] == 0
-                        ? data['Fare']
-                        : data['New_fare'];
+                    int newfare =
+                        data['New_fare'] == 0 ? data['Fare'] : data['New_fare'];
                     // Extract date and time components
                     int year = dateTime.year;
                     int month = dateTime.month;
@@ -81,7 +80,6 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     CustomProductDetailSmallContainer(
-                                        label: "Arrival",
                                         title: data['Arrivel_Time']),
                                     GestureDetector(
                                       onTap: () {},
@@ -138,7 +136,7 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                           'accepted_requests',
                                         );
                                         await FirebaseFirestore.instance
-                                            .collection('shiefrequests')
+                                            .collection('chiefrequests')
                                             .doc(document.id)
                                             .delete();
                                         await FirebaseFirestore.instance
@@ -149,10 +147,15 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                             .delete();
                                       },
                                       child: Container(
-                                          height: MediaQuery.of(context).size.height * 0.06.h,
-                                          width:  MediaQuery.of(context).size.width * 0.26.w,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.06.h,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.26.w,
                                           decoration: BoxDecoration(
-
                                             color: Colors.deepOrange.shade200,
                                           ),
                                           child: const Padding(
@@ -161,7 +164,8 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                               child: Text(
                                                 "Accept",
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.bold),
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                             ),
                                           )),
@@ -178,18 +182,18 @@ class _UserRequestQueueScreenState extends State<UserRequestQueueScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Date: $day/$month/$year'),
-                                   CustomProductDetailSmallContainer(
-                                    label: "Chef Details",
-                                    onTap: (){
-                                      Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ChefDetailsScreen(
-                                                              userid:
-                                                                  data['shiefid'])));
-                                    }
-                                    // title: data['shiefid'],
-                                  ),
+                                  CustomProductDetailSmallContainer(
+                                      label: "Chef Details",
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ChefDetailsScreen(
+                                                        userid:
+                                                            data['shiefid'])));
+                                      }
+                                      // title: data['shiefid'],
+                                      ),
                                   // GestureDetector(
                                   //   onTap: () {
                                   //     Navigator.of(context).push(

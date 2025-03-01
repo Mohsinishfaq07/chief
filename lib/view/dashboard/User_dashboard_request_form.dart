@@ -2,6 +2,7 @@
 
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/model/app_database.dart';
+import 'package:chief/model/request_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
 
   TextEditingController dateController = TextEditingController();
 
-  TextEditingController arrivelTimeController = TextEditingController();
+  TextEditingController arrivalTimeController = TextEditingController();
 
   TextEditingController eventTimeController = TextEditingController();
 
@@ -50,7 +51,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
     super.dispose();
     itemNameController.dispose();
     dateController.dispose();
-    arrivelTimeController.dispose();
+    arrivalTimeController.dispose();
     eventTimeController.dispose();
     noOfPeopleController.dispose();
     fareController.dispose();
@@ -100,7 +101,8 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
       selectedEventTime!.minute,
     );
 
-    final DateTime fourHoursBeforeEvent = eventDateTime.subtract(const Duration(hours: 1));
+    final DateTime fourHoursBeforeEvent =
+        eventDateTime.subtract(const Duration(hours: 1));
     TimeOfDay initialTime = TimeOfDay(
       hour: fourHoursBeforeEvent.hour,
       minute: fourHoursBeforeEvent.minute,
@@ -130,11 +132,12 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
 
       if (pickedDateTime.isAfter(fourHoursBeforeEvent)) {
         Fluttertoast.showToast(
-            msg: 'Arrival time must be at least 4 hours before the event time.');
+            msg:
+                'Arrival time must be at least 4 hours before the event time.');
       } else {
         setState(() {
           selectedArrivalTime = picked;
-          arrivelTimeController.text = formatTimeOfDay(picked);
+          arrivalTimeController.text = formatTimeOfDay(picked);
         });
       }
     }
@@ -219,7 +222,9 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
         child: Scaffold(
           key: _scaffoldKey,
           drawer: const UserDrawer(),
-          appBar: AppBar(backgroundColor: Colors.deepOrange.shade200,),
+          appBar: AppBar(
+            backgroundColor: Colors.deepOrange.shade200,
+          ),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(8.0),
             child: CustomLargeButton(
@@ -227,7 +232,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
               ontap: () {
                 if (itemNameController.text.isEmpty ||
                     dateController.text.isEmpty ||
-                    arrivelTimeController.text.isEmpty ||
+                    arrivalTimeController.text.isEmpty ||
                     eventTimeController.text.isEmpty ||
                     noOfPeopleController.text.isEmpty ||
                     fareController.text.isEmpty ||
@@ -235,20 +240,20 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                   Fluttertoast.showToast(msg: 'Fill the above field');
                 } else {
                   database.addRequest(
-                    context,
-                    '',
-                    itemNameController.text,
-                    dateController.text,
-                    arrivelTimeController.text,
-                    eventTimeController.text,
-                    noOfPeopleController.text,
-                    int.parse(fareController.text),
-                    availableIngController.text,
-                    name,
-                    image,
-                    'request_form',
-                    '',
-                    '',
+                    context: context,
+                    requestModel: RequestModel(
+                      itemName: itemNameController.text,
+                      date: dateController.text,
+                      arrivalTime: arrivalTimeController.text,
+                      eventTime: eventTimeController.text,
+                      totalPerson: noOfPeopleController.text,
+                      fare: fareController.text,
+                      ingredients: availableIngController.text,
+                      clientId: FirebaseAuth.instance.currentUser!.uid,
+                      acceptedChiefId: '',
+                      declinedChiefIds: [],
+                      acceptedChiefIds: [],
+                    ),
                   );
                 }
               },
@@ -268,53 +273,53 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                           const Spacer(),
                           const CustomTitleText(
                             text:
-                                'Add Request', // Only the text parameter is required
+                                'Request', // Only the text parameter is required
                           ),
                           const Spacer(),
-                          FutureBuilder<DocumentSnapshot>(
-                            future: FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user!.uid)
-                                .get(),
-                            builder: (context, userSnapshot) {
-                              if (userSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator(
-                                  color: Colors.pink,
-                                )); // Show loading indicator while waiting for user data
-                              }
-                              if (userSnapshot.hasError) {
-                                return Center(
-                                    child: Text(
-                                        'Error: ${userSnapshot.error}')); // Show error message if user data retrieval failed
-                              }
-                              // User data is available, display it
-                              if (userSnapshot.hasData &&
-                                  userSnapshot.data!.exists) {
-                                final userData = userSnapshot.data!.data()
-                                    as Map<String, dynamic>;
-                                image = userData['image'] ?? "";
-                                name = userData['Name'] ?? "No Name";
-                                return CircleAvatar(
-                                    radius: 40,
-                                    child: ClipOval(
-                                      child: image.isEmpty
-                                          ? const Icon(
-                                              Icons.person,
-                                              size: 30,
-                                            )
-                                          : Image.network(
-                                              image,
-                                              fit: BoxFit.cover,
-                                              width: 80,
-                                              height: 80,
-                                            ),
-                                    ));
-                              }
-                              return _userImageIcon();
-                            },
-                          ),
+                          // FutureBuilder<DocumentSnapshot>(
+                          //   future: FirebaseFirestore.instance
+                          //       .collection('users')
+                          //       .doc(user!.uid)
+                          //       .get(),
+                          //   builder: (context, userSnapshot) {
+                          //     if (userSnapshot.connectionState ==
+                          //         ConnectionState.waiting) {
+                          //       return const Center(
+                          //           child: CircularProgressIndicator(
+                          //         color: Colors.pink,
+                          //       )); // Show loading indicator while waiting for user data
+                          //     }
+                          //     if (userSnapshot.hasError) {
+                          //       return Center(
+                          //           child: Text(
+                          //               'Error: ${userSnapshot.error}')); // Show error message if user data retrieval failed
+                          //     }
+                          //     // User data is available, display it
+                          //     if (userSnapshot.hasData &&
+                          //         userSnapshot.data!.exists) {
+                          //       final userData = userSnapshot.data!.data()
+                          //           as Map<String, dynamic>;
+                          //       image = userData['image'] ?? "";
+                          //       name = userData['Name'] ?? "No Name";
+                          //       return CircleAvatar(
+                          //           radius: 40,
+                          //           child: ClipOval(
+                          //             child: image.isEmpty
+                          //                 ? const Icon(
+                          //                     Icons.person,
+                          //                     size: 30,
+                          //                   )
+                          //                 : Image.network(
+                          //                     image,
+                          //                     fit: BoxFit.cover,
+                          //                     width: 80,
+                          //                     height: 80,
+                          //                   ),
+                          //           ));
+                          //     }
+                          //     return _userImageIcon();
+                          //   },
+                          // ),
                           CustomSize(
                             width: 4.w,
                           ),
@@ -346,7 +351,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                         readOnly: true,
                         formatTime: true,
                         label: "Arrival Time ",
-                        controller: arrivelTimeController,
+                        controller: arrivalTimeController,
                         hintText: "Arrival Time ",
                         suffix: Icons.lock_clock,
                       ),

@@ -84,30 +84,26 @@ class UserMyOrdersScreen extends StatelessWidget {
                                     children: [
                                       UserInfoSection(image: data['image']),
                                       Container(
-                                        height: MediaQuery.of(
-                                            context)
-                                            .size
-                                            .height *
-                                            0.011.h,
-
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.011.h,
                                       ),
-                                      SizedBox(height: 22.h,),
-                                        CustomProductDetailSmallContainer(
-
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ChefDetailsScreen(
-                                                        userid: data['shiefid']),
-                                              ),
-                                            );
-                                          },
-                                          label: "Chef Details",
-
-                                        ),
-
+                                      SizedBox(
+                                        height: 22.h,
+                                      ),
+                                      CustomProductDetailSmallContainer(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChefDetailsScreen(
+                                                      userid: data['shiefid']),
+                                            ),
+                                          );
+                                        },
+                                        label: "Chef Details",
+                                      ),
                                     ],
                                   ),
                                   Column(
@@ -165,8 +161,8 @@ class UserMyOrdersScreen extends StatelessWidget {
                                 child: Container(
                                     height: MediaQuery.of(context).size.height *
                                         0.1,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.86.w,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.86.w,
                                     decoration: BoxDecoration(
                                         color: Colors.deepOrange.shade200),
                                     child: Padding(
@@ -175,7 +171,11 @@ class UserMyOrdersScreen extends StatelessWidget {
                                           child: SingleChildScrollView(
                                         child: Column(
                                           children: [
-                                            const Text("Available Ingredients",style: TextStyle(fontWeight: FontWeight.bold),),
+                                            const Text(
+                                              "Available Ingredients",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                             Text(data['Availabe_Ingredients']),
                                           ],
                                         ),
@@ -192,21 +192,23 @@ class UserMyOrdersScreen extends StatelessWidget {
                                       icon: const Icon(Icons.close,
                                           color: Colors.black),
                                       onPressed: () async {
-                                        await database.addRequest(
-                                            context,
-                                            data['userid'],
-                                            data['Item_Name'],
-                                            data['Date'],
-                                            data['Arrivel_Time'],
-                                            data['Event_Time'],
-                                            data['No_of_People'],
-                                            data['Fare'],
-                                            data['Availabe_Ingredients'],
-                                            data['User_Name'],
-                                            data['image'],
-                                            'new_requestform',
-                                            'pending',
-                                            '');
+                                        // await database.addRequest(
+                                        //   context,
+                                        //   data['userid'],
+                                        //   data['Item_Name'],
+                                        //   data['Date'],
+                                        //   data['Arrivel_Time'],
+                                        //   data['Event_Time'],
+                                        //   data['No_of_People'],
+                                        //   data['Fare'],
+                                        //   data['Availabe_Ingredients'],
+                                        //   data['User_Name'],
+                                        //   data['image'],
+                                        //   'new_requestform',
+                                        //   'pending',
+                                        //   '',
+                                        //   data['client_number'],
+                                        // );
                                         await requestData.rejectRequest(
                                             context, document.id);
                                         Fluttertoast.showToast(msg: 'rejected');

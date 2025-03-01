@@ -44,8 +44,8 @@ class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
                     isEqualTo: user!
                         .uid) // Filtering for documents with an empty 'Action' field
                 .snapshots(),
-            builder: (BuildContext context,
-                AsyncSnapshot<QuerySnapshot> snapshot) {
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 //  requestData.updateRequests(snapshot.data!.docs);
                 return ListView.builder(
@@ -82,8 +82,7 @@ class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
                                     children: [
                                       Column(
                                         children: [
-                                          UserInfoSection(
-                                              image: data['image']),
+                                          UserInfoSection(image: data['image']),
                                           Container(
                                             height: MediaQuery.of(context)
                                                     .size
@@ -101,8 +100,8 @@ class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       UserDetails(
-                                                          userid: data[
-                                                              'userid']),
+                                                          userid:
+                                                              data['userid']),
                                                 ),
                                               );
                                             },
@@ -139,8 +138,7 @@ class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
                                             child:
                                                 CustomProductDetailSmallContainer(
                                               label: "Fare",
-                                              title:
-                                                  data['Fare'].toString(),
+                                              title: data['Fare'].toString(),
                                             ),
                                           ),
                                           CustomProductDetailSmallContainer(
@@ -157,26 +155,21 @@ class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
                                   ),
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: MediaQuery.of(context)
-                                                .size
-                                                .height *
-                                            0.006),
+                                        vertical:
+                                            MediaQuery.of(context).size.height *
+                                                0.006),
                                     child: Container(
-                                        height: MediaQuery.of(context)
-                                                .size
-                                                .height *
-                                            0.1,
-                                        width: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                            0.86.w,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.1,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.86.w,
                                         decoration: BoxDecoration(
-                                            color:
-                                                Colors.deepOrange.shade200),
+                                            color: Colors.deepOrange.shade200),
                                         child: Center(
                                             child: Padding(
-                                          padding:
-                                              const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(8.0),
                                           child: SingleChildScrollView(
                                             child: Column(
                                               children: [
@@ -184,8 +177,7 @@ class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
                                                     "Available Ingredients",
                                                     style: TextStyle(
                                                         fontWeight:
-                                                            FontWeight
-                                                                .bold)),
+                                                            FontWeight.bold)),
                                                 Text(data[
                                                     'Availabe_Ingredients']),
                                               ],
@@ -203,23 +195,23 @@ class _ChefMyOrderScreenState extends State<ChefMyOrderScreen> {
                                           icon: const Icon(Icons.close,
                                               color: Colors.black),
                                           onPressed: () async {
-                                            await database.addRequest(
-                                                context,
-                                                data['userid'],
-                                                data['Item_Name'],
-                                                data['Date'],
-                                                data['Arrivel_Time'],
-                                                data['Event_Time'],
-                                                data['No_of_People'],
-                                                data['Fare'],
-                                                data[
-                                                    'Availabe_Ingredients'],
-                                                data['User_Name'],
-                                                data['image'],
-                                                'new_requestform',
-                                                'pending',
-                                                //
-                                                '');
+                                            // await database.addRequest(
+                                            //     context,
+                                            //     data['userid'],
+                                            //     data['Item_Name'],
+                                            //     data['Date'],
+                                            //     data['Arrivel_Time'],
+                                            //     data['Event_Time'],
+                                            //     data['No_of_People'],
+                                            //     data['Fare'],
+                                            //     data['Availabe_Ingredients'],
+                                            //     data['User_Name'],
+                                            //     data['image'],
+                                            //     'new_requestform',
+                                            //     'pending',
+                                            //     //
+                                            //     '',
+                                            //     'chief_number');
                                             await requestData.rejectRequest(
                                                 context, document.id);
                                             Fluttertoast.showToast(

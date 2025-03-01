@@ -2,7 +2,10 @@
 
 import 'dart:io';
 import 'package:chief/global_custom_widgets/custom_text_form_field.dart';
+import 'package:chief/model/all_user_detail_model.dart';
 import 'package:chief/model/app_database.dart';
+import 'package:chief/model/chief_detail_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -358,18 +361,31 @@ class _SignupChefState extends State<SignupChef> {
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((uid) => {
                 database.chefDetailToFireStore(
-                    context,
-                    name,
-                    number,
-                    address,
-                    email,
-                    pass,
-                    experience,
-                    speciality,
-                    certificate,
-                    _image,
-                    certificateImage,
-                    0),
+                  context: context,
+                  chiefDetail: ChiefDetailModel(
+                    address: address,
+                    certificateImage: certificateImage,
+                    certifications: certificate,
+                    email: email,
+                    name: name,
+                    number: number,
+                    password: pass,
+                    rating: '0',
+                    workExperience: experience,
+                    userId: _auth.currentUser!.uid,
+                    image: _image,
+                    role: 'chief',
+                    timestamp: Timestamp.now(),
+                    specialties: speciality,
+                  ),
+                  allUserDetail: AllUserDetailModel(
+                    id: _auth.currentUser!.uid,
+                    name: name,
+                    email: email,
+                    role: 'chief',
+                    timestamp: Timestamp.now(),
+                  ),
+                )
               });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');

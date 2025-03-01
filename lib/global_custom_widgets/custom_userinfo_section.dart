@@ -10,7 +10,7 @@ class UserInfoSection extends StatelessWidget {
     return Row(
       children: <Widget>[
         CircleAvatar(
-            radius: 40,
+            radius: 32,
             child: ClipOval(
                 child: image == ""
                     ? const Icon(
@@ -20,8 +20,8 @@ class UserInfoSection extends StatelessWidget {
                     : Image.network(
                         image,
                         fit: BoxFit.cover,
-                        width: 80,
-                        height: 80,
+                        width: 40,
+                        height: 40,
                       ))),
       ],
     );

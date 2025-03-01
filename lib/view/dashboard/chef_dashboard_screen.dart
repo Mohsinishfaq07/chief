@@ -111,7 +111,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
         data['Availabe_Ingredients'],
         data['User_Name'],
         data['image'],
-        'shiefrequests',
+        'chiefrequests',
         data['Rating'] ?? "",
         fare);
 
@@ -176,7 +176,7 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
             backgroundColor: Colors.deepOrange.shade200,
             drawer: const ChefDrawer(),
             appBar: AppBar(
-                title: const Text('All Requests',
+                title: const Text('Requests',
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 centerTitle: true,
                 backgroundColor: Colors.deepOrange.shade200),
@@ -221,10 +221,13 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                 String fare =
                                     data['Fare']?.toString() ?? 'No fare';
                                 String noofpeople =
-                                    data['No_of_people'] ?? 'No fare';
+                                    data['No_of_People'] ?? 'No People';
                                 String availableIngredients =
                                     data['Availabe_Ingredients'] ?? '';
-
+                                String clientName =
+                                    data['User_Name'] ?? 'No Name';
+                                String number =
+                                    data['client_number'] ?? 'No Number';
                                 // Check if the request should be visible
                                 if (!visibleRequests.containsKey(documentId)) {
                                   visibleRequests[documentId] = true;
@@ -268,61 +271,80 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                           image:
                                                               data['image'] ??
                                                                   ""),
-                                                      // Text(data['Name']),
-                                                      Container(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.011.h,
 
+                                                      CustomProductDetailSmallContainer(
+                                                        label: "Food Name",
+                                                        title: itemName,
                                                       ),
-                                                      SizedBox(height: 22.h,),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  UserDetails(
-                                                                      userid: data[
-                                                                          'userid']),
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              0.06.h,
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.26.w,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal: 2,
-                                                                  vertical: 2),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .deepOrange
-                                                                .shade200,
-                                                             borderRadius: BorderRadius.circular(10),
-                                                          ),
-                                                          child: const Center(
-                                                              child: Text(
-                                                            'User Details',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          )),
-                                                        ),
+                                                      CustomProductDetailSmallContainer(
+                                                        label: "Arrival",
+                                                        title: arrivalTime,
                                                       ),
+                                                      // GestureDetector(
+                                                      //   onTap: () {
+                                                      //     Navigator.push(
+                                                      //       context,
+                                                      //       MaterialPageRoute(
+                                                      //         builder: (context) =>
+                                                      //             UserDetails(
+                                                      //                 userid: data[
+                                                      //                     'userid']),
+                                                      //       ),
+                                                      //     );
+                                                      //   },
+                                                      //   child: Container(
+                                                      //     height: MediaQuery.of(
+                                                      //                 context)
+                                                      //             .size
+                                                      //             .height *
+                                                      //         0.06.h,
+                                                      //     width: MediaQuery.of(
+                                                      //                 context)
+                                                      //             .size
+                                                      //             .width *
+                                                      //         0.26.w,
+                                                      //     padding:
+                                                      //         const EdgeInsets
+                                                      //             .symmetric(
+                                                      //             horizontal: 2,
+                                                      //             vertical: 2),
+                                                      //     decoration:
+                                                      //         BoxDecoration(
+                                                      //       color: Colors
+                                                      //           .deepOrange
+                                                      //           .shade200,
+                                                      //       borderRadius:
+                                                      //           BorderRadius
+                                                      //               .circular(
+                                                      //                   10),
+                                                      //     ),
+                                                      //     child: const Center(
+                                                      //         child: Text(
+                                                      //       'User Details',
+                                                      //       style: TextStyle(
+                                                      //           fontWeight:
+                                                      //               FontWeight
+                                                      //                   .bold),
+                                                      //     )),
+                                                      //   ),
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  // name number arrival column
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      CustomProductDetailSmallContainer(
+                                                          label: "Name",
+                                                          title: clientName),
+                                                      CustomProductDetailSmallContainer(
+                                                          label: "Number",
+                                                          title: number),
+                                                      CustomProductDetailSmallContainer(
+                                                          label: "Event Time",
+                                                          title: eventTime),
                                                     ],
                                                   ),
                                                   Column(
@@ -331,21 +353,13 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                             .start,
                                                     children: [
                                                       CustomProductDetailSmallContainer(
-                                                          label: "Item",
-                                                          title: itemName),
+                                                        label: "People",
+                                                        title: noofpeople,
+                                                      ),
                                                       CustomProductDetailSmallContainer(
-                                                          label: "People",
-                                                          title: noofpeople),
-                                                      CustomProductDetailSmallContainer(
-                                                          label: "Arrival",
-                                                          title: arrivalTime),
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
+                                                        label: "Date",
+                                                        title: data['Date'],
+                                                      ),
                                                       GestureDetector(
                                                         onTap: () {
                                                           _showFareUpdateDialog(
@@ -353,17 +367,9 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                         },
                                                         child:
                                                             CustomProductDetailSmallContainer(
-                                                          label: "Fare",
+                                                          label: "Fare? ",
                                                           title: fare,
                                                         ),
-                                                      ),
-                                                      CustomProductDetailSmallContainer(
-                                                        label: "Date",
-                                                        title: data['Date'],
-                                                      ),
-                                                      CustomProductDetailSmallContainer(
-                                                        label: "Event ",
-                                                        title: eventTime,
                                                       ),
                                                     ],
                                                   )
@@ -389,17 +395,19 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                             0.9,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                           BorderRadius.circular(10),
+                                                          BorderRadius.circular(
+                                                              10),
                                                       color: Colors
                                                           .deepOrange.shade200,
                                                     ),
                                                     child: Center(
-                                                        child: SingleChildScrollView(
-                                                          child: Column(
-                                                                                                                mainAxisAlignment:
+                                                        child:
+                                                            SingleChildScrollView(
+                                                      child: Column(
+                                                        mainAxisAlignment:
                                                             MainAxisAlignment
                                                                 .center,
-                                                                                                                children: [
+                                                        children: [
                                                           const Text(
                                                             "Available Ingredients ",
                                                             style: TextStyle(
@@ -409,50 +417,73 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                                                           ),
                                                           Text(
                                                               availableIngredients),
-                                                                                                                ],
-                                                                                                              ),
-                                                        ))),
+                                                        ],
+                                                      ),
+                                                    ))),
                                               ),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
                                                         .spaceAround,
                                                 children: <Widget>[
-                                                  IconButton(
-                                                    icon:   const Icon(
-                                                        Icons.close,
-                                                        color: Colors.black,
-                                                      applyTextScaling: true,
-                                                     ),
-                                                    onPressed: () async {
+                                                  ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor: Colors
+                                                          .deepOrange
+                                                          .shade200, // Button color
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 16,
+                                                          horizontal: 24),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                12), // Rounded corners
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
                                                       _hideRequestTemporarily(
                                                           documentId);
                                                     },
+                                                    child: const Icon(
+                                                      Icons.close,
+                                                      color: Colors.black,
+                                                      applyTextScaling: true,
+                                                    ),
                                                   ),
-                                                  IconButton(
-                                                                                                        icon: const Icon(
-                                                    Icons.check,
-                                                    color: Colors.black),
-                                                                                                        onPressed: () =>
-                                                    _handleRequest(
-                                                        documentId, data),
-                                                                                                      ),
+                                                  CustomProductDetailSmallContainer(
+                                                      title: fare),
+                                                  ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor: Colors
+                                                          .deepOrange
+                                                          .shade200, // Button color
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 16,
+                                                          horizontal: 24),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                12), // Rounded corners
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      _handleRequest(
+                                                          documentId, data);
+                                                    },
+                                                    child: const Icon(
+                                                      Icons.check,
+                                                      color: Colors.black,
+                                                      applyTextScaling: true,
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 8, left: 5, right: 5),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                        'Date: $day/$month/$year'),
-                                                    Text('Time: $hour:$minute')
-                                                  ],
-                                                ),
-                                              )
                                             ],
                                           ),
                                         ),

@@ -1,7 +1,10 @@
 // ignore_for_file: use_build_context_synchronously, non_constant_identifier_names, avoid_print
 
 import 'dart:io';
+import 'package:chief/model/all_user_detail_model.dart';
 import 'package:chief/model/app_database.dart';
+import 'package:chief/model/client_detail_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -252,8 +255,27 @@ class _SignupUserState extends State<SignupUser> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: pass)
           .then((uid) => {
-                database.userDetailsToFireStore(context, name, number, address,
-                    email, pass, _image ?? "helo")
+                database.userDetailsToFireStore(
+                  context: context,
+                  clientDetail: ClientDetailModel(
+                    address: address,
+                    email: email,
+                    name: name,
+                    number: number,
+                    password: pass,
+                    userId: _auth.currentUser!.uid,
+                    image: _image ?? "enable_storage",
+                    role: 'user',
+                    timestamp: Timestamp.now(),
+                  ),
+                  allUserDetail: AllUserDetailModel(
+                    id: _auth.currentUser!.uid,
+                    name: name,
+                    email: email,
+                    role: 'user',
+                    timestamp: Timestamp.now(),
+                  ),
+                )
               });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');

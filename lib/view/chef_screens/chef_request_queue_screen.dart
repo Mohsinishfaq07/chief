@@ -3,7 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
- import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../global_custom_widgets/custom_product_small_container.dart';
 import '../../global_custom_widgets/custom_userinfo_section.dart';
@@ -36,7 +36,7 @@ class ChiefRequestQueueScreen extends StatelessWidget {
           child: Consumer<RequestData>(builder: (context, requestData, _) {
             return StreamBuilder(
               stream: FirebaseFirestore.instance
-                  .collection('shiefrequests')
+                  .collection('chiefrequests')
                   .where('shiefid', isEqualTo: user!.uid)
                   .snapshots(),
               builder: (BuildContext context,
@@ -133,20 +133,20 @@ class ChiefRequestQueueScreen extends StatelessWidget {
                                     width:
                                         MediaQuery.of(context).size.width * 0.8,
                                     decoration: BoxDecoration(
-                                         color: Colors.deepOrange.shade200),
+                                        color: Colors.deepOrange.shade200),
                                     child: Center(
                                         child: SingleChildScrollView(
-                                          child: Column(
-                                                                                children: [
+                                      child: Column(
+                                        children: [
                                           const Text(
                                             "Available Ingredients",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(data['Availabe_Ingredients']),
-                                                                                ],
-                                                                              ),
-                                        ))),
+                                        ],
+                                      ),
+                                    ))),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
