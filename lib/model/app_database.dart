@@ -438,6 +438,7 @@ class AppDatabase {
   Future<void> acceptByChief({
     required String docId,
     required String userId,
+    required String fare,
   }) async {
     try {
       CollectionReference ref =
@@ -445,9 +446,8 @@ class AppDatabase {
 
       await ref.doc(docId).update({
         'chefResponses': FieldValue.arrayUnion([
-          {'userId': userId, 'orderStatus': true} // Accepted
+          {'userId': userId, 'reqStatus': 'applied', 'fare': fare} // Accepted
         ]),
-        'acceptedChiefId': userId,
       });
 
       Fluttertoast.showToast(msg: 'Request accepted.');
@@ -467,7 +467,7 @@ class AppDatabase {
 
       await ref.doc(docId).update({
         'chefResponses': FieldValue.arrayUnion([
-          {'userId': userId, 'orderStatus': false} // Rejected
+          {'userId': userId, 'reqStatus': 'rejected', 'fare': '0'} // Rejected
         ]),
       });
 
@@ -487,10 +487,67 @@ class AppDatabase {
           FirebaseFirestore.instance.collection('food_orders');
       await ref.doc(docId).update({
         'acceptedChiefId': chiefId,
+        'orderStatus': 'assigned',
       });
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
       print("Error: $e");
+    }
+  }
+
+  Future<void> rejectByClient({
+    required String docId,
+    required String chiefId,
+  }) async {
+    try {
+      CollectionReference ref =
+          FirebaseFirestore.instance.collection('food_orders');
+      await ref.doc(docId).update({
+        'chefResponses': FieldValue.arrayUnion([
+          {'userId': chiefId, 'reqStatus': 'rejected', 'fare': '0'} // Rejected
+        ]),
+      });
+      // await ref.doc(docId).update({
+      //   'acceptedChiefId': chiefId,
+      // });
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e');
+      print("Error: $e");
+    }
+  }
+
+  Future<void> orderCompleted({
+    required String docId,
+  }) async {
+    try {
+      CollectionReference ref =
+          FirebaseFirestore.instance.collection('food_orders');
+      await ref.doc(docId).update({
+        'orderStatus': 'completed',
+      });
+      Fluttertoast.showToast(msg: 'order completed');
+      // await ref.doc(docId).update({
+      //   'acceptedChiefId': chiefId,
+      // });
+    } catch (e) {
+      Fluttertoast.showToast(msg: '$e');
+      print("Error: $e");
+    }
+  }
+
+  Future<ChiefDetailModel?> getChiefById({required String docId}) async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('chief_users').doc(docId).get();
+
+      if (doc.exists && doc.data() != null) {
+        return ChiefDetailModel.fromJson(doc.data() as Map<String, dynamic>);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching chief user: $e');
+      return null;
     }
   }
 

@@ -1,8 +1,10 @@
+import 'package:chief/provider/user_myrequest_provider.dart';
 import 'package:chief/view/all_chefs/all_chefs.dart';
-import 'package:chief/view/user_screens/user_myorders_screen.dart'
-    as userMyOrder;
+import 'package:chief/view/user_screens/my_orders_page.dart' as userMyOrder;
+import 'package:chief/view/user_screens/rehman/assigned_orders/assigned_orders.dart';
+import 'package:chief/view/user_screens/rehman/pending_orders/pending_requests.dart';
 import 'package:chief/view/user_screens/user_requestqueue_screen.dart';
-import 'package:chief/view/user_screens/user_myrequests_screen.dart';
+import 'package:chief/view/user_screens/pending_request_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,23 +52,22 @@ class _UserDrawerState extends State<UserDrawer> {
             text: 'New Request',
             routeName: UserDashboardRequestForm.tag,
           ),
-          _buildDrawerItem(
+          // _buildDrawerItem(
+          //     context: context,
+          //     icon: Icons.query_builder,
+          //     text: 'Request Queue',
+          //     routeName: PendingRequestScreen.tag),
+
+          _buildDrawerItemNew(
               context: context,
-              icon: Icons.query_builder,
-              text: 'Request Queue',
-              routeName: PendingRequestScreen.tag),
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.tv,
-            text: 'My Requests',
-            routeName: PendingRequestScreen.tag,
-          ),
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.shopping_bag_outlined,
-            text: 'My Orders',
-            routeName: UserMyOrdersScreen.tag,
-          ),
+              icon: Icons.shopping_bag_outlined,
+              text: 'Pending Orders',
+              screenName: UserPendingOrders()),
+          _buildDrawerItemNew(
+              context: context,
+              icon: Icons.tv,
+              text: 'Assigned Orders',
+              screenName: UserAssignedOrders()),
           _buildDrawerItem(
             context: context,
             icon: Icons.logout,
@@ -94,4 +95,22 @@ class _UserDrawerState extends State<UserDrawer> {
           _navigateTo(context, routeName);
         });
   }
+}
+
+Widget _buildDrawerItemNew(
+    {required BuildContext context,
+    required IconData icon,
+    required String text,
+    required screenName}) {
+  return ListTile(
+      leading: Icon(icon, color: Colors.white),
+      title: Text(text, style: const TextStyle(color: Colors.white)),
+      onTap: () {
+        if (text == 'Logout') {
+          FirebaseAuth.instance.signOut();
+        }
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return screenName;
+        }));
+      });
 }

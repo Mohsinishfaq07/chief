@@ -39,24 +39,31 @@ class ChiefRequestQueueScreen extends StatelessWidget {
             return StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('food_orders') // Use the correct collection name
-                  .where('chefResponses', arrayContains: {
-                'userId': user!.uid,
-                'orderStatus': true,
-              }).snapshots(),
+                  .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
+                  final filteredDocs = snapshot.data!.docs.where((doc) {
+                    final chefResponses =
+                        (doc['chefResponses'] as List<dynamic>?) ?? [];
+                    final acceptedChiefId =
+                        doc['acceptedChiefId'] as String? ?? '';
+
+                    return chefResponses.any((response) =>
+                        response['userId'] == user!.uid &&
+                        response['reqStatus'] == 'applied' &&
+                        acceptedChiefId == 'noChiefSelected');
+                  }).toList();
+
                   // Parse Firestore data into RequestModel and filter
-                  final requests = snapshot.data!.docs
-                      .map((doc) => RequestModel.fromJson(
-                            doc.data() as Map<String, dynamic>,
-                          ))
-                      .toList();
 
                   return ListView.builder(
-                    itemCount: requests.length,
+                    itemCount: filteredDocs.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final request = requests[index];
+                      final request = RequestModel.fromJson(
+                        filteredDocs[index].data() as Map<String, dynamic>,
+                      );
+
                       //   final timestamp = request.timestamp; // Assuming you have a timestamp field
                       //   final dateTime = timestamp.toDate();
                       // final year = dateTime.year;

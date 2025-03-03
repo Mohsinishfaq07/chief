@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart'; // For Timestamp
+
 class RequestModel {
   final String itemName;
   final String date;
@@ -9,6 +11,8 @@ class RequestModel {
   final String clientId;
   final List<Map<String, dynamic>> chefResponses; // Array of maps
   final String acceptedChiefId;
+  final Timestamp timestamp; // Added Timestamp field
+  final String orderStatus; // Added orderStatus field
 
   RequestModel({
     required this.itemName,
@@ -21,6 +25,8 @@ class RequestModel {
     required this.clientId,
     required this.chefResponses,
     required this.acceptedChiefId,
+    required this.timestamp, // Initialize timestamp
+    required this.orderStatus, // Initialize order status
   });
 
   factory RequestModel.fromJson(Map<String, dynamic> json) {
@@ -34,9 +40,11 @@ class RequestModel {
       ingredients: json['ingredients'],
       clientId: json['clientId'],
       chefResponses: List<Map<String, dynamic>>.from(
-        json['chefResponses'] ?? [], // Parse the array of maps
+        json['chefResponses'] ?? [],
       ),
       acceptedChiefId: json['acceptedChiefId'],
+      timestamp: json['timestamp'] ?? Timestamp.now(), // Ensure default value
+      orderStatus: json['orderStatus'] ?? 'Pending', // Default order status
     );
   }
 
@@ -50,8 +58,10 @@ class RequestModel {
       'fare': fare,
       'ingredients': ingredients,
       'clientId': clientId,
-      'chefResponses': chefResponses, // Include the array of maps in JSON
+      'chefResponses': chefResponses,
       'acceptedChiefId': acceptedChiefId,
+      'timestamp': timestamp,
+      'orderStatus': orderStatus,
     };
   }
 }

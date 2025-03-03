@@ -288,7 +288,11 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                         ),
                         onPressed: () {
                           AppDatabase().acceptByChief(
-                              docId: documentId, userId: user!.uid);
+                              docId: documentId,
+                              userId: user!.uid,
+                              fare: fareController.text.isEmpty
+                                  ? request.fare
+                                  : fareController.text);
                         },
                         child: const Icon(
                           Icons.check,

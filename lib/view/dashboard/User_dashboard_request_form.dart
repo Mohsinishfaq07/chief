@@ -252,8 +252,14 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                       clientId: FirebaseAuth.instance.currentUser!.uid,
                       acceptedChiefId: 'noChiefSelected',
                       chefResponses: [
-                        {'userId': 'dummyId', 'orderStatus': false},
+                        {
+                          'userId': 'dummyId',
+                          'reqStatus': 'pending',
+                          'fare': '0'
+                        },
                       ],
+                      timestamp: Timestamp.now(),
+                      orderStatus: 'notAssigned',
                     ),
                   );
                 }

@@ -1,22 +1,20 @@
+import 'package:chief/global_custom_widgets/custom_product_small_container.dart';
+import 'package:chief/global_custom_widgets/custom_userinfo_section.dart';
+import 'package:chief/model/app_database.dart';
+import 'package:chief/model/request_model.dart';
+import 'package:chief/provider/chief_dashboard_provider.dart';
 import 'package:chief/view/chef_screens/chef_details_screen.dart';
+import 'package:chief/view/drawer/user_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
-import '../../global_custom_widgets/custom_product_small_container.dart';
-import '../../global_custom_widgets/custom_userinfo_section.dart';
-import '../../model/app_database.dart';
-import '../../model/request_model.dart'; // Import the RequestModel
-import '../../provider/chief_dashboard_provider.dart';
-import '../drawer/user_drawer.dart';
-import '../rating_screens/rating_screen.dart';
 
-// ignore: must_be_immutable
-class UserMyOrdersScreen extends StatelessWidget {
-  UserMyOrdersScreen({super.key});
-  static const String tag = "MyOrderScreen";
+import 'package:provider/provider.dart';
+
+class UserAssignedOrders extends StatelessWidget {
+  UserAssignedOrders({super.key});
+
   AppDatabase database = AppDatabase();
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -27,7 +25,7 @@ class UserMyOrdersScreen extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('My Orders',
+        title: const Text('Assigned Orders',
             style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: Colors.deepOrange.shade200,
@@ -39,9 +37,8 @@ class UserMyOrdersScreen extends StatelessWidget {
           builder: (context, requestData, _) {
             return StreamBuilder(
               stream: FirebaseFirestore.instance
-                  .collection('food_orders') // Use the correct collection name
-                  .where('clientId', isEqualTo: user!.uid) // Match clientId
-
+                  .collection('food_orders')
+                  .where('clientId', isEqualTo: user!.uid)
                   .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -55,9 +52,11 @@ class UserMyOrdersScreen extends StatelessWidget {
                         (doc['chefResponses'] as List<dynamic>?) ?? [];
                     final acceptedChiefId =
                         doc['acceptedChiefId'] as String? ?? '';
-
-                    return chefResponses.any(
-                        (response) => acceptedChiefId == 'noChiefSelected');
+                    final orderStatus = doc['orderStatus'] as String? ?? '';
+                    return chefResponses.any((response) =>
+                        chefResponses.isNotEmpty &&
+                        acceptedChiefId != 'noChiefSelected' &&
+                        orderStatus == 'assigned');
                   }).toList();
 
                   return ListView.builder(
@@ -67,13 +66,14 @@ class UserMyOrdersScreen extends StatelessWidget {
                         filteredDocs[index].data() as Map<String, dynamic>,
                       );
                       String docId = filteredDocs[index].id;
-                      // final timestamp = request.timestamp; // Use the timestamp from RequestModel
-                      // final dateTime = timestamp.toDate();
-                      // final year = dateTime.year;
-                      // final month = dateTime.month;
-                      // final day = dateTime.day;
-                      // final hour = dateTime.hour;
-                      // final minute = dateTime.minute;
+                      final timestamp = request
+                          .timestamp; // Use the timestamp from RequestModel
+                      final dateTime = timestamp.toDate();
+                      final year = dateTime.year;
+                      final month = dateTime.month;
+                      final day = dateTime.day;
+                      final hour = dateTime.hour;
+                      final minute = dateTime.minute;
 
                       return Card(
                         elevation: 4,
@@ -103,8 +103,9 @@ class UserMyOrdersScreen extends StatelessWidget {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   ChefDetailsScreen(
-                                                      userid: request
-                                                          .acceptedChiefId), // Use acceptedChiefId from RequestModel
+                                                      userid:
+                                                          request.chefResponses[
+                                                              index]['userId']),
                                             ),
                                           );
                                         },
@@ -183,59 +184,40 @@ class UserMyOrdersScreen extends StatelessWidget {
                                       )),
                                     )),
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Container(
-                                    color: Colors.deepOrange.shade200,
-                                    child: IconButton(
-                                      icon: const Icon(Icons.close,
-                                          color: Colors.black),
-                                      onPressed: () async {
-                                        database.rejectByClient(
-                                            docId: docId,
-                                            chiefId:
-                                                request.chefResponses[index]
-                                                    ['userId']);
-                                        // await requestData.rejectRequest(context,
-                                        //     snapshot.data!.docs[index].id);
-                                        // Fluttertoast.showToast(msg: 'Rejected');
-                                      },
-                                    ),
-                                  ),
-                                  Container(
-                                    color: Colors.deepOrange.shade200,
-                                    child: IconButton(
-                                      icon: const Icon(Icons.check,
-                                          color: Colors.black),
-                                      onPressed: () async {
-                                        database.acceptedByClient(
-                                            docId: docId,
-                                            chiefId:
-                                                request.chefResponses[index]
-                                                    ['userId']);
-                                        // if (!await database.hasRatedChef(
-                                        //     request.acceptedChiefId,
-                                        //     user!.uid)) {
-                                        //   await database.completeOrder(
-                                        //       snapshot.data!.docs[index].id);
-                                        //   Navigator.of(context)
-                                        //       .push(MaterialPageRoute(
-                                        //     builder: (context) => RatingScreen(
-                                        //         chefId: request
-                                        //             .acceptedChiefId), // Use acceptedChiefId from RequestModel
-                                        //   ));
-                                        // } else {
-                                        //   Fluttertoast.showToast(
-                                        //       msg:
-                                        //           'You have already rated this chef');
-                                        // }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisAlignment:
+                              //       MainAxisAlignment.spaceAround,
+                              //   children: <Widget>[
+                              //     Container(
+                              //       color: Colors.deepOrange.shade200,
+                              //       child: IconButton(
+                              //         icon: const Icon(Icons.close,
+                              //             color: Colors.black),
+                              //         onPressed: () async {
+                              //           database.rejectByClient(
+                              //               docId: docId,
+                              //               chiefId:
+                              //                   request.chefResponses[index]
+                              //                       ['userId']);
+                              //         },
+                              //       ),
+                              //     ),
+                              //     Container(
+                              //       color: Colors.deepOrange.shade200,
+                              //       child: IconButton(
+                              //         icon: const Icon(Icons.check,
+                              //             color: Colors.black),
+                              //         onPressed: () async {
+                              //           database.acceptedByClient(
+                              //               docId: docId,
+                              //               chiefId:
+                              //                   request.chefResponses[index]
+                              //                       ['userId']);
+                              //         },
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               // Padding(
                               //   padding: const EdgeInsets.only(
                               //       top: 8, left: 5, right: 5),
