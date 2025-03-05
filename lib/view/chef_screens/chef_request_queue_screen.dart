@@ -111,7 +111,9 @@ class ChiefRequestQueueScreen extends StatelessWidget {
                                         child:
                                             CustomProductDetailSmallContainer(
                                           label: "Fare:",
-                                          title: request.fare,
+                                          title: request.chefResponses[index]
+                                                  ['fare']
+                                              .toString(),
                                         ),
                                       ),
                                       CustomProductDetailSmallContainer(

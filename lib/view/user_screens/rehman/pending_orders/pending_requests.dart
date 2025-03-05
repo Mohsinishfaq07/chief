@@ -135,8 +135,9 @@ class UserPendingOrders extends StatelessWidget {
                                     children: [
                                       CustomProductDetailSmallContainer(
                                         label: "Fare",
-                                        title: request
-                                            .fare, // Use fare from RequestModel
+                                        title: request.chefResponses[index]
+                                                ['fare']
+                                            .toString(), // Use fare from RequestModel
                                       ),
                                       CustomProductDetailSmallContainer(
                                         label: "Date",

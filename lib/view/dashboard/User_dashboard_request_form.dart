@@ -2,12 +2,14 @@
 
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/model/app_database.dart';
+import 'package:chief/model/client_detail_model.dart';
 import 'package:chief/model/request_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import '../../global_custom_widgets/custom_horizontal_line.dart';
 import '../../global_custom_widgets/custom_large_button.dart';
 import '../../global_custom_widgets/custom_size.dart';
@@ -44,6 +46,16 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
   User? user = FirebaseAuth.instance.currentUser;
   String image = '';
   String name = '';
+  ClientDetailModel? clientDetailModel;
+  getClientDetails() async {
+    clientDetailModel = await database.getUserById(docId: user!.uid);
+  }
+
+  @override
+  void initState() {
+    getClientDetails();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -251,13 +263,7 @@ class _UserDashboardRequestFormState extends State<UserDashboardRequestForm> {
                       ingredients: availableIngController.text,
                       clientId: FirebaseAuth.instance.currentUser!.uid,
                       acceptedChiefId: 'noChiefSelected',
-                      chefResponses: [
-                        {
-                          'userId': 'dummyId',
-                          'reqStatus': 'pending',
-                          'fare': '0'
-                        },
-                      ],
+                      chefResponses: [],
                       timestamp: Timestamp.now(),
                       orderStatus: 'notAssigned',
                     ),

@@ -6,6 +6,7 @@ import 'package:chief/model/all_user_detail_model.dart';
 import 'package:chief/model/chief_detail_model.dart';
 import 'package:chief/model/client_detail_model.dart';
 import 'package:chief/model/request_model.dart';
+import 'package:chief/view/user_screens/user_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -548,6 +549,62 @@ class AppDatabase {
     } catch (e) {
       print('Error fetching chief user: $e');
       return null;
+    }
+  }
+
+  Future<ClientDetailModel?> getUserById({required String docId}) async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(docId).get();
+
+      if (doc.exists && doc.data() != null) {
+        return ClientDetailModel.fromJson(doc.data() as Map<String, dynamic>);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching  user: $e');
+      return null;
+    }
+  }
+
+  Future<ClientDetailModel> getClientById({required String docId}) async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('users').doc(docId).get();
+
+    if (!snapshot.exists) {
+      throw Exception('User not found');
+    }
+
+    return ClientDetailModel.fromJson(snapshot.data()!);
+  }
+
+  Future<void> rateChef({
+    required String docId,
+    required String givenRating,
+  }) async {
+    try {
+      DocumentReference chefRef =
+          FirebaseFirestore.instance.collection('chief_users').doc(docId);
+
+      DocumentSnapshot chefSnapshot = await chefRef.get();
+
+      if (chefSnapshot.exists) {
+        String previousRatingStr = (chefSnapshot['rating'] ?? "0");
+        double previousRating = double.tryParse(previousRatingStr) ?? 0.0;
+
+        double newRatingValue = double.tryParse(givenRating) ?? 0.0;
+
+        double newRating = (previousRating + newRatingValue) / 2;
+
+        await chefRef.update({'rating': newRating.toString()});
+
+        print("Chef rating updated successfully: $newRating");
+      } else {
+        print("Chef document does not exist.");
+      }
+    } catch (e) {
+      print("Error updating chef rating: $e");
     }
   }
 

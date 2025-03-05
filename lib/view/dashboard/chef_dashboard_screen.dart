@@ -1,6 +1,7 @@
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/global_custom_widgets/custom_text_form_field.dart';
 import 'package:chief/model/app_database.dart';
+import 'package:chief/model/client_detail_model.dart';
 import 'package:chief/model/request_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -145,8 +146,30 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                       final request = RequestModel.fromJson(
                         filteredDocs[index].data() as Map<String, dynamic>,
                       );
-                      return _buildRequestCard(
-                          context, request, filteredDocs[index].id);
+                      final clientId = request.clientId; // Extract clientId
+
+                      return FutureBuilder<ClientDetailModel>(
+                        future: database.getClientById(
+                            docId: clientId), // Fetch client details
+                        builder: (context, clientSnapshot) {
+                          if (clientSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          if (clientSnapshot.hasError) {
+                            return Text('Error: ${clientSnapshot.error}');
+                          }
+                          if (!clientSnapshot.hasData) {
+                            return const Text('Client details not found');
+                          }
+
+                          final clientDetails = clientSnapshot.data!;
+
+                          return _buildRequestCard(context, request,
+                              filteredDocs[index].id, clientDetails);
+                        },
+                      );
                     },
                   );
                 } else if (snapshot.hasError) {
@@ -164,8 +187,8 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
     );
   }
 
-  Widget _buildRequestCard(
-      BuildContext context, RequestModel request, String documentId) {
+  Widget _buildRequestCard(BuildContext context, RequestModel request,
+      String documentId, ClientDetailModel clientDetails) {
     return Column(
       children: [
         Padding(
@@ -199,9 +222,9 @@ class _ChefDashboardScreenState extends State<ChefDashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomProductDetailSmallContainer(
-                              label: "Name", title: 'get by client id'),
+                              label: "Name", title: clientDetails.name),
                           CustomProductDetailSmallContainer(
-                              label: "Number", title: 'get by client id'),
+                              label: "Number", title: clientDetails.number),
                           CustomProductDetailSmallContainer(
                               label: "Event Time", title: request.eventTime),
                         ],

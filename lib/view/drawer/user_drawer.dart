@@ -2,6 +2,7 @@ import 'package:chief/provider/user_myrequest_provider.dart';
 import 'package:chief/view/all_chefs/all_chefs.dart';
 import 'package:chief/view/user_screens/my_orders_page.dart' as userMyOrder;
 import 'package:chief/view/user_screens/rehman/assigned_orders/assigned_orders.dart';
+import 'package:chief/view/user_screens/rehman/completed_orders/completed_orders.dart';
 import 'package:chief/view/user_screens/rehman/pending_orders/pending_requests.dart';
 import 'package:chief/view/user_screens/user_requestqueue_screen.dart';
 import 'package:chief/view/user_screens/pending_request_page.dart';
@@ -57,7 +58,11 @@ class _UserDrawerState extends State<UserDrawer> {
           //     icon: Icons.query_builder,
           //     text: 'Request Queue',
           //     routeName: PendingRequestScreen.tag),
-
+          _buildDrawerItemNew(
+              context: context,
+              icon: Icons.shopping_bag_outlined,
+              text: 'Completed Orders',
+              screenName: const UserCompletedOrders()),
           _buildDrawerItemNew(
               context: context,
               icon: Icons.shopping_bag_outlined,

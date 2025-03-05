@@ -1,3 +1,5 @@
+import 'package:chief/model/app_database.dart';
+import 'package:chief/model/chief_detail_model.dart';
 import 'package:chief/view/all_chefs/all_chefs.dart';
 import 'package:chief/view/chef_screens/rehman/active_orders/active_orders.dart';
 import 'package:chief/view/chef_screens/rehman/completed_orders/chef_completed_orders.dart';
@@ -11,11 +13,29 @@ import '../chef_screens/chef_myorders_screen.dart.dart';
 import '../chef_screens/chef_request_queue_screen.dart';
 import '../dashboard/chef_dashboard_screen.dart';
 
-class ChefDrawer extends StatelessWidget {
+class ChefDrawer extends StatefulWidget {
   const ChefDrawer({super.key});
 
+  @override
+  State<ChefDrawer> createState() => _ChefDrawerState();
+}
+
+class _ChefDrawerState extends State<ChefDrawer> {
   void _navigateTo(BuildContext context, String routeName) {
     Navigator.pushNamed(context, routeName);
+  }
+
+  AppDatabase database = AppDatabase();
+  User? user = FirebaseAuth.instance.currentUser;
+  ChiefDetailModel? chiefDetailModel;
+  getChefDetails() async {
+    chiefDetailModel = await database.getChiefById(docId: user!.uid);
+  }
+
+  @override
+  void initState() {
+    getChefDetails();
+    super.initState();
   }
 
   @override
