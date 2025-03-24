@@ -35,8 +35,30 @@ class MyApp extends StatelessWidget {
         builder: (_, child) {
           return MaterialApp(
             theme: ThemeData(
-              scaffoldBackgroundColor: Colors.deepOrange.shade200,
+              scaffoldBackgroundColor: Colors.transparent,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+              ),
             ),
+            builder: (context, child) {
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.deepOrange.shade200,
+                      Colors.deepOrange.shade100,
+                      Colors.white,
+                      Colors.white.withOpacity(0.8),
+                    ],
+                    stops: const [0.1, 0.4, 0.7, 1.0],
+                  ),
+                ),
+                child: child!,
+              );
+            },
             debugShowCheckedModeBanner: false,
             title: 'Chief',
             initialRoute: getInitialRoute(),

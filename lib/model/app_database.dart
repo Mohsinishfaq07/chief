@@ -16,8 +16,10 @@ import 'package:chief/view/get_started_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../view/dashboard/chef_dashboard_screen.dart';
+import '../utils/shared_preferences_manager.dart';
 
 class AppDatabase {
   final _auth = FirebaseAuth.instance;
@@ -35,26 +37,40 @@ class AppDatabase {
     );
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: pass);
-      String role = await getUserRole();
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      // Navigate based on user role
-      if (role == 'chief') {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const ChefDashboardScreen()),
-          (Route<dynamic> route) => false,
-        );
-      } else if (role == 'user') {
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const UserDashboardRequestForm()),
-          (Route<dynamic> route) => false,
-        );
+      final user = _auth.currentUser;
+      if (user != null) {
+        DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await _firestore.collection('allusers').doc(user.uid).get();
+
+        if (snapshot.exists) {
+          final data = snapshot.data()!;
+          await SharedPreferencesManager.saveUserSession(
+            userId: user.uid,
+            name: data['Name'] ?? '',
+            email: data['Email'] ?? '',
+            role: data['role'] ?? '',
+            image: data['image'],
+          );
+
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          if (data['role'] == 'chief') {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ChefDashboardScreen()),
+              (Route<dynamic> route) => false,
+            );
+          } else if (data['role'] == 'user') {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const UserDashboardRequestForm()),
+              (Route<dynamic> route) => false,
+            );
+          }
+          Fluttertoast.showToast(msg: "Login Successful");
+        }
       }
-      Fluttertoast.showToast(msg: "Login Successful");
     } catch (e) {
       Fluttertoast.showToast(msg: '$e');
       Navigator.of(context).pop();
@@ -132,56 +148,6 @@ class AppDatabase {
     }
   }
 
-  // Future<void> chefDetailToFireStore(
-  //     BuildContext context,
-  //     String name,
-  //     String number,
-  //     String address,
-  //     String email,
-  //     String pass,
-  //     String experience,
-  //     String speciality,
-  //     String certificate,
-  //     String image,
-  //     String certificateimage,
-  //     int rating) async {
-  //   var user = _auth.currentUser;
-  //   CollectionReference ref =
-  //       FirebaseFirestore.instance.collection('chief_users');
-  //   ref.doc(user!.uid).set({
-  //     'id': user.uid,
-  //     'Name': name,
-  //     'Number': number,
-  //     'Address': address,
-  //     'Email': email,
-  //     'Password': pass,
-  //     'Work Experience': experience,
-  //     'Specialities': speciality,
-  //     'Certifications': certificate,
-  //     'Certificate image': certificateimage,
-  //     'image': image,
-  //     'Rating': rating.toString(),
-  //     'role': 'chief',
-  //     'timestamp': FieldValue.serverTimestamp()
-  //   });
-  //   CollectionReference allUsersRef =
-  //       FirebaseFirestore.instance.collection('allusers');
-  //   allUsersRef.doc(user.uid).set({
-  //     'id': user.uid,
-  //     'Name': name,
-  //     'Email': email,
-  //     'role': 'chief',
-  //     'timestamp': FieldValue.serverTimestamp()
-  //   });
-  //   Fluttertoast.showToast(msg: "Account Created");
-  //   Navigator.of(context).popUntil((route) => route.isFirst);
-  //   Navigator.pushAndRemoveUntil(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const GetStartedScreen()),
-  //     (Route<dynamic> route) => false,
-  //   );
-  // }
-
   Future<void> chefDetailToFireStore({
     required BuildContext context,
     required ChiefDetailModel chiefDetail,
@@ -190,18 +156,26 @@ class AppDatabase {
     try {
       var user = _auth.currentUser;
 
-      CollectionReference chiefRef =
-          FirebaseFirestore.instance.collection('chief_users');
+      await FirebaseFirestore.instance
+          .collection('chief_users')
+          .doc(user!.uid)
+          .set(chiefDetail.toJson());
 
-      await chiefRef.doc(user!.uid).set(chiefDetail.toJson());
+      await FirebaseFirestore.instance
+          .collection('allusers')
+          .doc(user.uid)
+          .set(allUserDetail.toJson());
 
-      CollectionReference allUsersRef =
-          FirebaseFirestore.instance.collection('allusers');
-
-      await allUsersRef.doc(user.uid).set(allUserDetail.toJson());
+      // Save user info to SharedPreferences
+      await saveUserInfo(
+        userId: user.uid,
+        name: allUserDetail.name,
+        email: allUserDetail.email,
+        role: allUserDetail.role,
+        image: chiefDetail.image,
+      );
 
       Fluttertoast.showToast(msg: "Chief Account Created");
-
       Navigator.of(context).popUntil((route) => route.isFirst);
       Navigator.pushAndRemoveUntil(
         context,
@@ -209,136 +183,10 @@ class AppDatabase {
         (Route<dynamic> route) => false,
       );
     } catch (e) {
-      // Handle errors
       Fluttertoast.showToast(msg: "Error: $e");
       print("Error: $e");
     }
   }
-  // Future<void> chefDetailToFireStore(
-  //     BuildContext context,
-  //     String name,
-  //     String number,
-  //     String address,
-  //     String email,
-  //     String pass,
-  //     String experience,
-  //     String speciality,
-  //     String certificate,
-  //     String image,
-  //     String certificateimage,
-  //     int rating,
-  //     ) async {
-  //   var user = _auth.currentUser;
-  //   CollectionReference ref = FirebaseFirestore.instance.collection('chief_users');
-  //
-  //   try {
-  //     // Check if the email is verified
-  //     if (!user!.emailVerified) {
-  //       // Prompt the chef to verify the email
-  //       Fluttertoast.showToast(msg: "Please verify your email before creating your account.");
-  //       await user.sendEmailVerification(); // Send verification email
-  //
-  //       // Show countdown dialog with option to check verification
-  //       bool isEmailVerified = await showDialog(
-  //         context: context,
-  //         barrierDismissible: false,
-  //         builder: (context) {
-  //           return EmailVerificationDialog(user: user);
-  //         },
-  //       ) ?? false; // If dialog is dismissed, default to false
-  //
-  //       // Final check after countdown or "Check Now"
-  //       if (!isEmailVerified) {
-  //         Fluttertoast.showToast(msg: "Email verification not completed. Sign-up process stopped.");
-  //         return; // Stop the sign-up process if email is not verified
-  //       }
-  //     }
-  //
-  //     // Check if the user already exists in Firestore
-  //     DocumentSnapshot existingUser = await ref.doc(user.uid).get();
-  //     if (existingUser.exists) {
-  //       Fluttertoast.showToast(msg: "Account already exists. Please log in.");
-  //       return; // Exit the function if the user already exists
-  //     }
-  //
-  //     // Email is verified and no existing user, proceed with creating account in Firestore
-  //     await ref.doc(user.uid).set({
-  //       'id': user.uid,
-  //       'Name': name,
-  //       'Number': number,
-  //       'Address': address,
-  //       'Email': email,
-  //       'Password': pass,
-  //       'Work Experience': experience,
-  //       'Specialities': speciality,
-  //       'Certifications': certificate,
-  //       'Certificate image': certificateimage,
-  //       'image': image,
-  //       'Rating': rating.toString(),
-  //       'role': 'chief',
-  //       'timestamp': FieldValue.serverTimestamp()
-  //     });
-  //
-  //     CollectionReference allUsersRef = FirebaseFirestore.instance.collection('allusers');
-  //     await allUsersRef.doc(user.uid).set({
-  //       'id': user.uid,
-  //       'Name': name,
-  //       'Email': email,
-  //       'role': 'chief',
-  //       'timestamp': FieldValue.serverTimestamp()
-  //     });
-  //
-  //     // Inform user that account creation was successful
-  //     Fluttertoast.showToast(msg: "Account Created");
-  //
-  //     // Navigate to GetStartedScreen
-  //     Navigator.of(context).popUntil((route) => route.isFirst);
-  //     Navigator.pushAndRemoveUntil(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => const GetStartedScreen()),
-  //           (Route<dynamic> route) => false,
-  //     );
-  //
-  //   } catch (e) {
-  //     // Handle errors related to Firebase operations or other exceptions
-  //     print('Error creating chef account: $e');
-  //     Fluttertoast.showToast(msg: 'An error occurred. Please try again later.');
-  //   }
-  // }
-
-  // void userDetailsToFireStore(BuildContext context, String name, String number,
-  //     String address, String email, String pass, String imagepath) {
-  //   var user = _auth.currentUser;
-  //   CollectionReference ref = FirebaseFirestore.instance.collection('users');
-  //   ref.doc(user!.uid).set({
-  //     'id': user.uid,
-  //     'Name': name,
-  //     'Number': number,
-  //     'Address': address,
-  //     'Email': email,
-  //     'Password': pass,
-  //     'role': 'user',
-  //     'image': imagepath,
-  //     'timestamp': FieldValue.serverTimestamp()
-  //   });
-  //   CollectionReference allusersref =
-  //       FirebaseFirestore.instance.collection('allusers');
-  //   allusersref.doc(user.uid).set({
-  //     'id': user.uid,
-  //     'Name': name,
-  //     'Email': email,
-  //     'image': imagepath,
-  //     'role': 'user',
-  //     'timestamp': FieldValue.serverTimestamp()
-  //   });
-  //   Fluttertoast.showToast(msg: "Account Created");
-  //   Navigator.of(context).popUntil((route) => route.isFirst);
-  //   Navigator.pushAndRemoveUntil(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const GetStartedScreen()),
-  //     (Route<dynamic> route) => false,
-  //   );
-  // }
 
   void userDetailsToFireStore({
     required BuildContext context,
@@ -348,13 +196,26 @@ class AppDatabase {
     try {
       var user = _auth.currentUser;
 
-      CollectionReference userRef =
-          FirebaseFirestore.instance.collection('users');
-      await userRef.doc(user!.uid).set(clientDetail.toJson());
-      CollectionReference allUsersRef =
-          FirebaseFirestore.instance.collection('allusers');
-      await allUsersRef.doc(user.uid).set(allUserDetail.toJson());
-      Fluttertoast.showToast(msg: "Account Created");
+      await FirebaseFirestore.instance
+          .collection('client_users')
+          .doc(user!.uid)
+          .set(clientDetail.toJson());
+
+      await FirebaseFirestore.instance
+          .collection('allusers')
+          .doc(user.uid)
+          .set(allUserDetail.toJson());
+
+      // Save user info to SharedPreferences
+      await saveUserInfo(
+        userId: user.uid,
+        name: allUserDetail.name,
+        email: allUserDetail.email,
+        role: allUserDetail.role,
+        image: clientDetail.image,
+      );
+
+      Fluttertoast.showToast(msg: "User Account Created");
       Navigator.of(context).popUntil((route) => route.isFirst);
       Navigator.pushAndRemoveUntil(
         context,
@@ -362,77 +223,25 @@ class AppDatabase {
         (Route<dynamic> route) => false,
       );
     } catch (e) {
-      // Handle errors
       Fluttertoast.showToast(msg: "Error: $e");
       print("Error: $e");
     }
   }
 
-  // Future<void> addRequest(
-  //   BuildContext context,
-  //   String userid,
-  //   String itemName,
-  //   String date,
-  //   String arrivelTime,
-  //   String eventTime,
-  //   String noOfPeople,
-  //   int fare,
-  //   String availabeingred,
-  //   String name,
-  //   String image,
-  //   String collection,
-  //   String action,
-  //   String status,
-  //   String clientNumber,
-  // ) async {
-  //   final user = _auth.currentUser;
-  //   try {
-  //     CollectionReference ref =
-  //         FirebaseFirestore.instance.collection(collection);
-  //     ref.doc().set({
-  //       'userid': user!.uid,
-  //       'shiefid': '',
-  //       'User_Name': name,
-  //       'Item_Name': itemName,
-  //       'Date': date,
-  //       'Arrivel_Time': arrivelTime,
-  //       'Event_Time': eventTime,
-  //       'No_of_People': noOfPeople,
-  //       'Fare': fare,
-  //       'image': image,
-  //       'client_number': clientNumber,
-  //       'Availabe_Ingredients': availabeingred,
-  //       'accepted_chief_ids': [],
-  //       'denied_chief_ids': [],
-  //       'timestamp': FieldValue.serverTimestamp(),
-  //     });
-  //   } catch (e) {
-  //     Fluttertoast.showToast(msg: '$e');
-  //   }
-  //   if (collection == 'request_form') {
-  //     Fluttertoast.showToast(msg: "Request Added");
-  //     Navigator.of(context).push(MaterialPageRoute(
-  //         builder: (context) => const UserDashboardRequestForm()));
-  //   }
-  // }
-
-  Future<void> addRequest({
+  Future<void> requestToFireStore({
     required BuildContext context,
     required RequestModel requestModel,
   }) async {
     try {
-      CollectionReference ref =
-          FirebaseFirestore.instance.collection('food_orders');
-      await ref.doc().set(requestModel.toJson());
-      Fluttertoast.showToast(msg: "Request Added");
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const UserDashboardRequestForm(),
-        ),
-      );
+      await FirebaseFirestore.instance
+          .collection('requests')
+          .add(requestModel.toJson())
+          .then((value) {
+        Fluttertoast.showToast(msg: 'Request Added Successfully');
+        Navigator.pop(context);
+      });
     } catch (e) {
-      Fluttertoast.showToast(msg: '$e');
-      print("Error: $e");
+      Fluttertoast.showToast(msg: 'Error: $e');
     }
   }
 
@@ -745,15 +554,14 @@ class AppDatabase {
     }
   }
 
-// Method to handle acceptance of a request by a user
   Future<void> acceptRequestAndUpdateVisibility(String requestId) async {
     await FirebaseFirestore.instance
         .collection('new_requestform')
         .doc(requestId)
         .update({
-      'status': 'accepted', // Indicate that the request has been accepted
-      'isVisibleToChef': false, // No longer visible on Chef's Dashboard
-      'isVisibleToUser': true, // Still visible to the user in My Orders
+      'status': 'accepted',
+      'isVisibleToChef': false,
+      'isVisibleToUser': true,
     }).then((value) {
       Fluttertoast.showToast(msg: "Request moved to My Orders");
     }).catchError((error) {
@@ -771,25 +579,13 @@ class AppDatabase {
       print(e);
     }
   }
-  // Future<void> userAcceptsRequest(String requestId) async {
-  //   await FirebaseFirestore.instance.collection('new_requestform').doc(requestId).update({
-  //     'status': 'accepted',
-  //     'isVisibleToChef': false,  // This request should no longer be visible in the chef's request queue
-  //     'isVisibleToUser': true,   // Should still be visible to the user until completely processed
-  //     'isVisibleInMyOrders': true // Now it should be visible in the user's My Orders section
-  //   });
-  // }
 
-  // Method to handle acceptance of a request by a chef
-// In AppDatabase class
-  // In AppDatabase or wherever you handle Firestore operations
   Future<void> chefAcceptsRequest(String requestId) async {
     await FirebaseFirestore.instance
         .collection('new_requestform')
         .doc(requestId)
         .update({
-      'Action':
-          'in processing', // Indicate that the chef has accepted the request but it's not finalized
+      'Action': 'in processing',
     }).then((value) {
       Fluttertoast.showToast(
           msg: "Request accepted, awaiting user confirmation.");
@@ -798,15 +594,11 @@ class AppDatabase {
     });
   }
 
-// Method to handle acceptance of a request by a user
   Future<void> userAcceptsRequest(String requestId) async {
     await _firestore.collection('accepted_requests').doc(requestId).update({
       'status': 'accepted',
-      'isVisibleToChef':
-          false, // This request should no longer be visible in the chef's request queue
-      'isVisibleToUser':
-          true, // Should still be visible to the user until completely processed
-      // ...additional updates if needed
+      'isVisibleToChef': false,
+      'isVisibleToUser': true,
     }).then((value) {
       Fluttertoast.showToast(msg: "Request accepted by user.");
     }).catchError((error) {
@@ -816,11 +608,10 @@ class AppDatabase {
 
   Future<void> acceptRequest(BuildContext context, String documentId) async {
     await _firestore.collection('request_form').doc(documentId).update({
-      'Action': 'accepted', // Update the action to 'accepted'
-      'isVisibleToChef': false, // Make it invisible to other chefs
+      'Action': 'accepted',
+      'isVisibleToChef': false,
     }).then((_) {
       Fluttertoast.showToast(msg: 'Request accepted.');
-      // Optionally, navigate to the chef's dashboard or update the UI
     }).catchError((error) {
       Fluttertoast.showToast(msg: 'Error accepting request: $error');
     });
@@ -833,8 +624,7 @@ class AppDatabase {
         DocumentSnapshot<Map<String, dynamic>> snapshot =
             await _firestore.collection('allusers').doc(user.uid).get();
         if (snapshot.exists && snapshot.data() != null) {
-          return snapshot.data()!['Name'] ??
-              'No Name'; // Assuming 'Name' is the field in Firestore
+          return snapshot.data()!['Name'] ?? 'No Name';
         } else {
           return 'No Name';
         }
@@ -849,33 +639,55 @@ class AppDatabase {
 
   Future<void> completeOrder(String documentId) async {
     try {
-      // Update the order's status to 'completed'
       await _firestore.collection('accepted_requests').doc(documentId).update({
         'status': 'completed',
       });
-      // Handle any other updates or cleanup operations here
       print("Order marked as completed.");
     } catch (e) {
       print("An error occurred while completing the order: $e");
-      // Handle any errors here
     }
   }
 
   Future<bool> hasRatedChef(String chefId, String userId) async {
     try {
-      // Assuming there's a collection named 'ratings' where each document represents a rating
-      // and has 'chefId' and 'userId' fields
       var querySnapshot = await _firestore
           .collection('ratings')
           .where('chefId', isEqualTo: chefId)
           .where('userId', isEqualTo: userId)
           .get();
 
-      // If the query returns any documents, it means the user has rated this chef
       return querySnapshot.docs.isNotEmpty;
     } catch (e) {
       print("Error checking rating status: $e");
-      return false; // or handle the exception as needed
+      return false;
+    }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    await SharedPreferencesManager.clearUserSession();
+    await _auth.signOut();
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const GetStartedScreen()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  Future<void> saveUserInfo({
+    required String userId,
+    required String name,
+    required String email,
+    required String role,
+    String? image,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    await prefs.setString('userId', userId);
+    await prefs.setString('userName', name);
+    await prefs.setString('userEmail', email);
+    await prefs.setString('userRole', role);
+    if (image != null) {
+      await prefs.setString('userImage', image);
     }
   }
 }
@@ -883,7 +695,7 @@ class AppDatabase {
 class EmailVerificationDialog extends StatefulWidget {
   final User user;
 
-  EmailVerificationDialog({required this.user});
+  const EmailVerificationDialog({required this.user});
 
   @override
   _EmailVerificationDialogState createState() =>
@@ -915,15 +727,13 @@ class _EmailVerificationDialogState extends State<EmailVerificationDialog> {
   }
 
   Future<void> _checkEmailVerification() async {
-    await widget.user
-        .reload(); // Reload the user's data to get the latest status
+    await widget.user.reload();
     setState(() {
       _isEmailVerified = widget.user.emailVerified;
     });
 
     if (_isEmailVerified) {
-      Navigator.of(context)
-          .pop(true); // Close dialog and return true if email is verified
+      Navigator.of(context).pop(true);
     } else {
       Fluttertoast.showToast(
           msg: "Email not verified yet. Please check your email.");

@@ -40,11 +40,11 @@ dependencies:
   cloud_firestore:
   firebase_auth:
   firebase_app_check:
-  fluttertoast:
+  fluttertoast: ^8.2.4
 
   image_picker:
   firebase_storage:
-  shared_preferences:
+  shared_preferences: ^2.5.2
   provider:
   email_auth:
   firebase_messaging:

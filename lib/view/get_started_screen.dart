@@ -1,92 +1,69 @@
 import 'package:chief/global_custom_widgets/custom_small_buttons.dart';
 import 'package:chief/view/auth/signup_user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import '../app_assets.dart';
 import '../firebase_services.dart';
 import '../global_custom_widgets/custom_app_bar.dart';
-import '../global_custom_widgets/custom_horizontal_line.dart';
-import '../global_custom_widgets/custom_large_button.dart';
 import 'auth/signup_chef.dart';
 import 'auth/login_screen.dart';
 
 class GetStartedScreen extends StatefulWidget {
-  const GetStartedScreen({
-    super.key,
-  });
+  const GetStartedScreen({super.key});
   static const String tag = '/GetStartedScreen';
   @override
   State<GetStartedScreen> createState() => _GetStartedScreenState();
 }
 
-class _GetStartedScreenState extends State<GetStartedScreen> {
+class _GetStartedScreenState extends State<GetStartedScreen>
+    with SingleTickerProviderStateMixin {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  Future<void> sendNotification(String fcmToken, String title, String body) async {
-    final accountCredentials = ServiceAccountCredentials.fromJson({
-      // Replace these fields with your actual service account credentials
-      "type": "service_account",
-      "project_id": "chief-24f12",
-      "private_key_id": "ba82fda03876df719b3a7ff1d6a8a0ab2cebae75",
-      "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCnYdjVz+NpHnJp\nzSBJfFPSdm1HpIRSAQp1gCEwQ0gBqA7hX/zZ/eeXl9+j7q4PmZPGiA2ZczFOX7+k\nWFnf95tZMxBQzdJ78hYHcxJ2+gUZE6wb/4fjVquMGPzWOEbygSxj0ktNFaTC+VyS\nxnnu7Lb5s3jMO6z8Xmwg7/uQ+eGBQSDSTStjfazAjUHSor09k/EyJT+Iub3n+SbV\nAgeqEAlbk4j256NTdK712bSs7oLeZru+xB3U6vAjCIZ7+A/zNJBK6wdQaSMFNEIt\nJIcp9nNt+xSLMcwRMyIoI2j8LxOR6vCS389ZURddz4VgyHeDZEei0VD0eU3He6xO\nF0onG/ZhAgMBAAECggEAFTbLXCH6gRQDopGFx4/d3H1M/A5dBOWuioDgSUp7DFay\nosbfIvkmtT8MRa3WWrzMuWtR9Je1xpNPvzJsGvzksAlO8TwniApWghWICr3vuni/\nUKxyGmfy2xE/A57jWGXzFyhhNIELPk42I5YggHMjp6x4TBjozkg2AnYCrM0MKIJA\n+yBETH03eHINU1j6y2cVTTxwY/Mkxj3X3UfKFV4LcAQe6ycI9/UpVP3fuFp4BE4n\nemBMcBR4HEIIYvbtj6HeQtQyKzFMJ2LVXCmi2pACQEZFFF2jcNb6ODzznF1yBdeh\nCaogFry3zebrPzOIe8X9DWG15ufFdFoEEf+jRnPLPwKBgQDUstB1Zillvkmmwu/Z\nRdPj2WQ0B9vaV6bt1CFJUsgzi/bHv6Om5+7HtWXo5/irzjw4R4DUYQh5/pZ1P7F8\nSxAz6flh74aLCd0ecpeJl/WlPNZ3jpqJqKvniZV45GB66UKTj/La/nJ+iknnnxoz\nIZ/Mt0d/xfR7nVEZcKUqmKa6zwKBgQDJdUnyXogIBa848osiAgRmiAPW2uxSR5Iq\nsEsERy2Xqi3WyXQiVvY4OQNbOf7IMwDbJ4GfNuIsULBoVY3fwC3WF8r4tc6OCVqU\nKCNg5goWkKuhx7y/ikTXAD1jWL/JEFPzIlD9bkGkdmF24MJ6yohEeCyiCHiDMujy\n89nbRqzHzwKBgELZqLcdUumNcyycnDHXxo8YZmwMBEeNwQOC5qta/11kIj4Jt2/f\n+aZ/Fvaq4fdtrHOr1Yvqq3VcVQGo8Sm1lfQbF6x2Uf0lLoBBV+uA/U3f3zBYe63E\ne7McBQSoEsLOyYQDfDrkOiwXXr8TvHJRoR4AhNJd70di3Hh4dRD8RXr1AoGAKW/e\njeOzxzKkH+qDg7M2hIBlicPt596gyfcI9xBM6G0wkIVPReDtNBNGBXWgWj1jZ7Bw\nkPcQ/lx6bHtseyFkTC0Iqq96lOyHnQHEhSHL4WhQZS5YPG2MS0zZU53llM2u9suQ\nLRCIn/NZiMIiPm96J9swEwP7BcFq+M3/eYLH9zECgYEAwDlyauLMpSmzBc2qo4KI\nmIheChrJfq5ZlG2fW6c6UJFnQH88NutcF8D7Dnw8EkYOn7eUJuVsy64bwlA1qff7\nc0CzLezyC8MGj3s79k9C8DmnrXoBhY0FM3cuzJsfPplkLMHleA8SnXavXRdbytgk\nmuRQisTaEKueJIY6EcN2X9E=\n-----END PRIVATE KEY-----\n",
-      "client_email": "firebase-adminsdk-6pvlb@chief-24f12.iam.gserviceaccount.com",
-      "client_id": "114485518466141194225",
-      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-      "token_uri": "https://oauth2.googleapis.com/token",
-      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-      "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-6pvlb%40chief-24f12.iam.gserviceaccount.com",
-      "universe_domain": "googleapis.com"
-    });
-
-    final scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
-
-    final httpClient = await clientViaServiceAccount(accountCredentials, scopes);
-
-    const url = 'https://fcm.googleapis.com/v1/projects/chief-24f12 /messages:send';
-
-    final message = {
-      "message": {
-        "token": fcmToken,
-        "notification": {
-          "title": title,
-          "body": body,
-        },
-      },
-    };
-
-    final response = await httpClient.post(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(message),
-    );
-
-    if (response.statusCode == 200) {
-      print('Notification sent successfully');
-    } else {
-      print('Failed to send notification: ${response.statusCode} ${response.body}');
-    }
-
-    httpClient.close();
-  }
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // Subscribe to a topic
+    // Animation setup
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 1.0, curve: Curves.easeIn),
+      ),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
+    _controller.forward();
+
+    // Firebase setup
     _firebaseMessaging.subscribeToTopic('all').then((_) {
       print('Subscribed to topic "all"');
     });
-
-    // Initialize push notifications
     FirebaseApi().initPushNotifications(context);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -96,87 +73,164 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
         final shouldPop = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: Colors.deepOrange.shade200,
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
             title: Text(
               'Exit App',
               style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  fontSize: 20.sp),
+                fontWeight: FontWeight.w800,
+                color: Colors.deepOrange.shade700,
+                fontSize: 22.sp,
+              ),
             ),
             content: Text(
               'Do you really want to exit the app?',
-              style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              style: TextStyle(
+                color: Colors.deepOrange.shade900,
+                fontSize: 16.sp,
+              ),
             ),
             actions: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  CustomSmallButton(
-                      title: "No",
-                      ontap: () {
-                        Navigator.of(context).pop(false);
-                      }),
-                  CustomSmallButton(
-                      title: "Yes",
-                      ontap: () {
-                        Navigator.of(context).pop(true);
-                        SystemNavigator.pop();
-                      }),
+                  _buildDialogButton(
+                      "No", () => Navigator.of(context).pop(false)),
+                  _buildDialogButton("Yes", () {
+                    Navigator.of(context).pop(true);
+                    SystemNavigator.pop();
+                  }),
                 ],
               ),
             ],
           ),
         );
-
         return shouldPop ?? false;
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
-        appBar: const CustomAppBarWidget(
-          showBackButton: false,
+        appBar: const CustomAppBarWidget(showBackButton: false),
+        body: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                children: [
+                  const Spacer(),
+                  // Logo with shadow
+                  Container(
+                    width: 200.w,
+                    height: 200.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.deepOrange.shade200.withOpacity(0.3),
+                          blurRadius: 25,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    padding: EdgeInsets.all(20.w),
+                    child: Image.asset(AppAssets.imgCookingBro),
+                  ),
+                  SizedBox(height: 50.h),
+                  // Buttons
+                  _buildButton(
+                    'Login',
+                    () => onTapLogin(context),
+                    Colors.white,
+                    Colors.deepOrange.shade700,
+                  ),
+                  SizedBox(height: 20.h),
+                  _buildButton(
+                    'Sign up as a Chef',
+                    () => onTapSignUpAsAChef(context),
+                    Colors.deepOrange.shade700,
+                    Colors.white,
+                  ),
+                  SizedBox(height: 20.h),
+                  _buildButton(
+                    'Sign up as a User',
+                    () => onTapSignUpAsAUser(context),
+                    Colors.deepOrange.shade700,
+                    Colors.white,
+                  ),
+                  const Spacer(),
+                ],
+              ),
+            ),
+          ),
         ),
-        body: Column(children: [
-          const Spacer(),
-          Flexible(
-            child: Image.asset(
-              AppAssets.imgCookingBro,
-              height: MediaQuery.of(context).size.height * 0.3.h,
+      ),
+    );
+  }
+
+  Widget _buildButton(
+      String text, VoidCallback onTap, Color bgColor, Color textColor) {
+    return Container(
+      width: double.infinity,
+      height: 55.h,
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(15),
+          onTap: onTap,
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1,
+              ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height * 0.05.h),
-            child: CustomLargeButton(
-              title: 'Login',
-              ontap: () {
-                onTapLogin(context);
-              },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDialogButton(String text, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: text == "Yes"
+                ? Colors.deepOrange.shade700
+                : Colors.deepOrange.shade200,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const CustomHorizontalDivider(),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height * 0.04.h),
-            child: CustomLargeButton(
-                title: 'Sign up as a Chef',
-                ontap: () {
-                  onTapSignUpAsAChef(context);
-                }),
-          ),
-          CustomLargeButton(
-              title: 'Sign up as a User',
-              ontap: () {
-                onTapSignUpAsAUser(context);
-              }),
-          const SizedBox(height: 10,),
-          CustomLargeButton(
-              title: 'Send notifications',
-              ontap: () {
-                sendNotification("TARGET_FCM_TOKEN", "Notification Title", "Notification Body");
-              }),
-          const Spacer(),
-        ]),
+        ),
       ),
     );
   }
